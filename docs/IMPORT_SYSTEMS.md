@@ -2,7 +2,7 @@
 
 Beszel+ 在“添加系统”中提供“从 YAML 导入已有系统”入口，也可直接打开“设置 → YAML 配置”。选择原版 Beszel 导出的 `.yml`、`.yaml`，或粘贴相同内容，预览后确认批量导入。扩展名为 `.md`、`.txt` 的纯 YAML 文件也可选择；Markdown 代码围栏不属于 YAML。
 
-当前实现在 plus/main，独立本地预览为 `http://127.0.0.1:18091/settings/config`，版本 `0.21.1-plus.1-history.2-local`，源码 `23d275f81c6e4cdf7ee67f9d0048e5c89d26196b`。此前公开候选 `0.21.1-plus.1-candidate.42181555701.1` 尚不包含此功能；18090 的候选版及其观察任务继续运行。
+当前实现在 plus/main，独立本地预览为 `http://127.0.0.1:18091/settings/config`，版本 `0.21.1-plus.1-candidate.42217473195.1`，源码 `082cae8ed46597e1c29f731c488b848fd96cc24e`。[本轮公开候选](https://github.com/CodeAIX/Beszel-Plus/releases/tag/v0.21.1-plus.1-candidate.42217473195.1) 已包含一键导入、流量设置导入导出和七天离线缓存；18090 的候选版及其观察任务继续运行。
 
 ## 导入行为
 
@@ -34,7 +34,7 @@ YAML 导出只包含系统清单、地址、端口、Token 和用户邮箱，**�
 
 用户提供的本地导出文件已仅通过预览检查：10 个系统均可解析，未创建系统或发起远程连接，真实文件及 Token 未加入仓库。浏览器使用独立实例与回环地址样例完成粘贴预览、确认新增 2 台/跳过 1 台、文件选择后重复导入全部跳过的验证。
 
-首版基础导入的 [GitHub 完整回归 42192569636](https://github.com/CodeAIX/Beszel-Plus/actions/runs/42192569636) 的 Agent、Web/Hub 两项任务均成功；对应功能源码 `04f2350c549515b0b7424a32063d939d7a3c8046`，本机预览镜像标注同一源码。此功能尚未发布新公共镜像。
+首版基础导入的 [GitHub 完整回归 42192569636](https://github.com/CodeAIX/Beszel-Plus/actions/runs/42192569636) 的 Agent、Web/Hub 两项任务均成功；对应功能源码 `04f2350c549515b0b7424a32063d939d7a3c8046`，当时本机预览镜像标注同一源码。此段记录首版验收；三项功能现已随本轮公开候选合并发布。
 
 ![已有系统导入预览，使用回环地址样例；重复项全部跳过](images/import-systems.png)
 
@@ -54,7 +54,7 @@ YAML 导出只包含系统清单、地址、端口、Token 和用户邮箱，**�
 
 可在 Agent 首次上报前恢复网络接口与配额；接口存在性要等实际采集后确认。恢复配置并不安装 vnStat、升级 Agent 或填充历史流量。
 
-断线采样与补传的现状和方案见 [OFFLINE_HISTORY](OFFLINE_HISTORY.md)。已实现每分钟采样、最近 7 天的 Agent 持久化缓存及恢复补传；需要升级 Plus Agent 并保留数据卷。本地与 [GitHub CI](https://github.com/CodeAIX/Beszel-Plus/actions/runs/42214559483) 均已通过，尚未发布包含这些新功能的公共镜像。
+断线采样与补传的现状和方案见 [OFFLINE_HISTORY](OFFLINE_HISTORY.md)。已实现每分钟采样、最近 7 天的 Agent 持久化缓存及恢复补传；需要升级 Plus Agent 并保留数据卷。本地与 [GitHub CI](https://github.com/CodeAIX/Beszel-Plus/actions/runs/42214559483) 均已通过，三项功能现已合并发布，镜像与更新方式见 [当前候选](traffic/CANDIDATE.md) 和 [更新指南](UPGRADE.md)。
 
 本轮流量设置功能源码 `d80e39bed956777656ebba100a4a997851bf4da5`，对应 [GitHub 回归 42198360686](https://github.com/CodeAIX/Beszel-Plus/actions/runs/42198360686) 的 Agent、Web/Hub 任务全绿。本地 Hub/config 包 race 回归、vnStat 三日断线补齐测试、前端 33 项测试及生产构建通过。
 

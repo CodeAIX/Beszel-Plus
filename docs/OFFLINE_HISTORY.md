@@ -1,6 +1,6 @@
 # 七天离线缓存与恢复补传
 
-用户于 2026-11-06 选择最近 **7 天、每分钟一个样本**。Plus Agent 与 Hub 已实现缓存、分页补传和图表集成，本地与 GitHub CI 验证已通过，尚未发布新公共镜像。公开候选 `0.21.1-plus.1-candidate.42181555701.1` 尚不含本功能；仅升级 Hub 不会让原版 Agent 产生历史缓存。
+用户于 2026-11-06 选择最近 **7 天、每分钟一个样本**。Plus Agent 与 Hub 已实现缓存、分页补传和图表集成，本地与 GitHub CI 验证已通过，并随 [候选 0.21.1-plus.1-candidate.42217473195.1](https://github.com/CodeAIX/Beszel-Plus/releases/tag/v0.21.1-plus.1-candidate.42217473195.1) 合并发布；仅升级 Hub 不会让原版 Agent 产生历史缓存。
 
 ## 使用行为
 
@@ -72,7 +72,7 @@ flowchart LR
 
 ## 本轮交付与预览
 
-功能源码 `23d275f81c6e4cdf7ee67f9d0048e5c89d26196b`，本地 Hub/Agent 测试镜像版本 `0.21.1-plus.1-history.2-local`。主预览 `http://127.0.0.1:18091` 已升级；升级前完整备份数据目录，之后确认原有 10 台 VPS 全部在线，系统地址、名称、授权、Hub 身份密钥、Agent 指纹/Token 和人工流量设置保持一致。未向该预览注入任何测试系统或测试配额。
+发布源码 `082cae8ed46597e1c29f731c488b848fd96cc24e`，版本 `0.21.1-plus.1-candidate.42217473195.1`。主预览 `http://127.0.0.1:18091` 已从本地测试构建切换为公开镜像；升级前完整备份数据目录，之后确认原有 10 台 VPS 全部在线，系统地址、名称、授权、Hub 身份密钥、Agent 指纹/Token 和人工流量设置保持一致。未向该预览注入任何测试系统或测试配额。
 
 隔离实例 `http://127.0.0.1:18093` 用于 Plus Agent 与 Hub 的真实断线测试及明确标注的七天模拟图表。最终同一源码构建的两个容器重新创建后，既有缓存文件内容保持一致，新样本可继续同步。18090 的旧候选及其观察任务未切换，旧候选的观察结果不代表本次新增功能已经连续验收。
 
@@ -81,7 +81,7 @@ flowchart LR
 ```yaml
 services:
   beszel-agent:
-    # 使用之后发布并验证过的新 Plus Agent 版本；旧候选不含七天缓存。
+    # 镜像固定版本与摘要见当前候选及 Docker 更新指南。
     volumes:
       - ./beszel_agent_data:/var/lib/beszel-agent
     environment:
@@ -89,4 +89,4 @@ services:
       BESZEL_HISTORY_MAX_BYTES: "268435456"
 ```
 
-此处仅展示缓存相关片段。沿用部署中已有的卷路径、KEY/TOKEN/HUB_URL、网络与 Docker socket 配置，合并片段时保留原有挂载和环境变量；不要换成空数据卷。本轮未升级真实 VPS 的 Agent。公共镜像的正式发布与部署记录应在实际发布后补充，不能用本地镜像标签代替公共版本。
+此处仅展示缓存相关片段。沿用部署中已有的卷路径、KEY/TOKEN/HUB_URL、网络与 Docker socket 配置，合并片段时保留原有挂载和环境变量；不要换成空数据卷。本轮未升级真实 VPS 的 Agent。公共镜像现已发布，具体固定版本与摘要见 [当前候选](traffic/CANDIDATE.md)，更新步骤见 [Docker 更新指南](UPGRADE.md)。本地 18091 及隔离的 18093 已切换到本轮公开镜像，相关保留与补传检查再次通过；真实 VPS 的 Agent 尚未升级。
