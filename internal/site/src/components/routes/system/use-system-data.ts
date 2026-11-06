@@ -234,11 +234,8 @@ export function useSystemData(id: string) {
 			setContainerData(cachedContainerData || [])
 			setChartLoading(false)
 
-			// Skip the fetch if the latest cached point is recent enough that no new point is expected yet
-			const lastCreated = cachedSystemStats.at(-1)?.created as number | undefined
-			if (lastCreated && Date.now() - lastCreated < expectedInterval * 0.9) {
-				return
-			}
+			// A late replay can change older chart buckets while the latest point
+			// remains recent, so the historical window must still refresh.
 		} else {
 			setChartLoading(true)
 		}
@@ -256,15 +253,15 @@ export function useSystemData(id: string) {
 
 			// make new system stats
 			let systemData = (cache.get(ss_cache_key) || []) as SystemStatsRecord[]
-			if (systemStats.status === "fulfilled" && systemStats.value.length) {
-				systemData = appendData(systemData, systemStats.value, expectedInterval, 100)
+			if (systemStats.status === "fulfilled") {
+				systemData = appendData([], systemStats.value, expectedInterval, 100)
 				cache.set(ss_cache_key, systemData)
 			}
 			setSystemStats(systemData)
 			// make new container stats
 			let containerData = (cache.get(cs_cache_key) || []) as ChartData["containerData"]
-			if (containerStats.status === "fulfilled" && containerStats.value.length) {
-				containerData = appendData(containerData, makeContainerData(containerStats.value), expectedInterval, 100)
+			if (containerStats.status === "fulfilled") {
+				containerData = appendData([], makeContainerData(containerStats.value), expectedInterval, 100)
 				cache.set(cs_cache_key, containerData)
 			}
 			setContainerData(containerData)

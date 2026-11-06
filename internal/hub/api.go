@@ -179,6 +179,8 @@ func (h *Hub) registerApiRoutes(se *core.ServeEvent) error {
 	// get public key and version
 	apiAuth.GET("/info", h.getInfo)
 	apiAuth.GET("/traffic/overview", h.trafficOverview)
+	apiAuth.GET("/history/stats", h.historyStats)
+	apiAuth.GET("/history/status", h.historyStatus)
 	apiAuth.GET("/traffic/detail", h.trafficDetail)
 	apiAuth.PATCH("/traffic/settings", h.trafficUpdateSettings).BindFunc(excludeReadOnlyRole)
 	apiAuth.GET("/getkey", h.getInfo) // deprecated - keep for compatibility w/ integrations

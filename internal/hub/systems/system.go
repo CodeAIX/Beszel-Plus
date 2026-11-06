@@ -38,6 +38,7 @@ import (
 )
 
 type System struct {
+	historySyncing atomic.Bool
 	Id             string                         `db:"id"`
 	Host           string                         `db:"host"`
 	Port           string                         `db:"port"`
@@ -190,6 +191,9 @@ func (sys *System) update() error {
 
 	// create system records
 	_, err = sys.createRecords(data)
+	if err == nil {
+		sys.startHistorySync(data.History)
+	}
 	if err == nil && data.Traffic != nil && sys.manager.traffic != nil {
 		sys.manager.traffic.enqueue(sys.Id, data.Traffic)
 	}

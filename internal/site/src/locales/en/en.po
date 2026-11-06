@@ -3064,3 +3064,39 @@ msgstr "Update traffic settings only; keep connection and history"
 #: src/components/routes/settings/import-systems.tsx
 msgid "Updates interface, quota, billing mode and period, display unit and enabled state. Connection settings, collector status and historical counters are preserved. Traffic-only files never create systems."
 msgstr "Updates interface, quota, billing mode and period, display unit and enabled state. Connection settings, collector status and historical counters are preserved. Traffic-only files never create systems."
+
+#: src/components/routes/system/history-status.tsx
+msgid "Agent disconnected; showing the last synced cache."
+msgstr "Agent disconnected; showing the last synced cache."
+
+#: src/components/routes/system/history-status.tsx
+msgid "Agent offline cache: 7 days, one sample per minute."
+msgstr "Agent offline cache: 7 days, one sample per minute."
+
+#: src/components/routes/system/history-status.tsx
+msgid "Available since"
+msgstr "Available since"
+
+#: src/components/routes/system/history-status.tsx
+msgid "Cached history could not be loaded. Live monitoring remains available."
+msgstr "Cached history could not be loaded. Live monitoring remains available."
+
+#: src/components/routes/system/history-status.tsx
+msgid "Cached samples synced."
+msgstr "Cached samples synced."
+
+#: src/components/routes/system/history-status.tsx
+msgid "Offline history is not enabled on this agent. Update to the Plus Agent to keep a seven-day local cache."
+msgstr "Offline history is not enabled on this agent. Update to the Plus Agent to keep a seven-day local cache."
+
+#: src/components/routes/system/history-status.tsx
+msgid "Some history is unavailable because of a cache limit, storage error or an expired retention window. Missing samples are not treated as zero."
+msgstr "Some history is unavailable because of a cache limit, storage error or an expired retention window. Missing samples are not treated as zero."
+
+#: src/components/routes/system/history-status.tsx
+msgid "Syncing cached samples…"
+msgstr "Syncing cached samples…"
+
+#: src/components/routes/system/history-status.tsx
+msgid "Waiting for the first persisted sample."
+msgstr "Waiting for the first persisted sample."

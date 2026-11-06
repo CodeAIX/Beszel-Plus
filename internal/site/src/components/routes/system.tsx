@@ -28,6 +28,7 @@ import { ContainerIcon, CpuIcon, HardDriveIcon, NetworkIcon, PackageIcon, Termin
 import { GpuIcon } from "../ui/icons"
 import ContainersTable from "../containers-table/containers-table"
 import TrafficPanel from "./system/traffic-panel"
+import HistoryStatus from "./system/history-status"
 
 const SEMVER_0_14_0 = parseSemVer("0.14.0")
 const SEMVER_0_15_0 = parseSemVer("0.15.0")
@@ -190,7 +191,8 @@ export default memo(function SystemDetail({ id }: { id: string }) {
 						<Trans>Network</Trans>
 					</TabsTrigger>
 					<TabsTrigger value="traffic" className="w-full flex items-center gap-1.5">
-						<NetworkIcon className="size-3.5" /><Trans>Traffic</Trans>
+						<NetworkIcon className="size-3.5" />
+						<Trans>Traffic</Trans>
 					</TabsTrigger>
 					<TabsTrigger value="disk" className="w-full flex items-center gap-1.5">
 						<HardDriveIcon className="size-3.5" />
@@ -339,6 +341,7 @@ export default memo(function SystemDetail({ id }: { id: string }) {
 				details={details}
 			/>
 
+			<HistoryStatus key={system.id} systemId={system.id} online={system.status === "up"} />
 			{displayMode === "tabs" ? tabbedLayout() : defaultLayout()}
 		</div>
 	)

@@ -59,6 +59,7 @@ type SystemManager struct {
 	ctx                 context.Context                       // Cancelled when the app terminates
 	cancel              context.CancelFunc                    // Cancels ctx and all child system contexts
 	traffic             *trafficWriter                        // Optional bounded, independent persistence
+	historySlots        chan struct{}
 }
 
 // hubLike defines the interface requirements for the hub dependency.
@@ -86,6 +87,7 @@ func NewSystemManager(hub hubLike) *SystemManager {
 	}
 	sm.ctx, sm.cancel = context.WithCancel(context.Background())
 	sm.traffic = &trafficWriter{manager: sm, pending: make(map[string]*traffic.Snapshot)}
+	sm.historySlots = make(chan struct{}, 2)
 	return sm
 }
 

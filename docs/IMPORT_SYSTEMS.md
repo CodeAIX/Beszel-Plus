@@ -2,7 +2,7 @@
 
 Beszel+ 在“添加系统”中提供“从 YAML 导入已有系统”入口，也可直接打开“设置 → YAML 配置”。选择原版 Beszel 导出的 `.yml`、`.yaml`，或粘贴相同内容，预览后确认批量导入。扩展名为 `.md`、`.txt` 的纯 YAML 文件也可选择；Markdown 代码围栏不属于 YAML。
 
-当前实现在 plus/main，独立本地预览为 `http://127.0.0.1:18091/settings/config`，版本 `0.21.1-plus.1-import.2-local`。此前公开候选 `0.21.1-plus.1-candidate.42181555701.1` 尚不包含此功能；18090 的候选版及其观察任务继续运行。
+当前实现在 plus/main，独立本地预览为 `http://127.0.0.1:18091/settings/config`，版本将在七天缓存验收后同步更新。此前公开候选 `0.21.1-plus.1-candidate.42181555701.1` 尚不包含此功能；18090 的候选版及其观察任务继续运行。
 
 ## 导入行为
 
@@ -54,7 +54,7 @@ YAML 导出只包含系统清单、地址、端口、Token 和用户邮箱，**�
 
 可在 Agent 首次上报前恢复网络接口与配额；接口存在性要等实际采集后确认。恢复配置并不安装 vnStat、升级 Agent 或填充历史流量。
 
-断线采样与补传的现状和方案见 [OFFLINE_HISTORY](OFFLINE_HISTORY.md)。普通指标的磁盘缓存尚未实现，不随本次设置功能宣称交付；当前不发布公共镜像，待发布前范围确定和验收完成。
+断线采样与补传的现状和方案见 [OFFLINE_HISTORY](OFFLINE_HISTORY.md)。已实现每分钟采样、最近 7 天的 Agent 持久化缓存及恢复补传；需要升级 Plus Agent 并保留数据卷。当前先完成本地与 CI 验收，尚未发布包含这些新功能的公共镜像。
 
 本轮流量设置功能源码 `d80e39bed956777656ebba100a4a997851bf4da5`，对应 [GitHub 回归 42198360686](https://github.com/CodeAIX/Beszel-Plus/actions/runs/42198360686) 的 Agent、Web/Hub 任务全绿。本地 Hub/config 包 race 回归、vnStat 三日断线补齐测试、前端 33 项测试及生产构建通过。
 

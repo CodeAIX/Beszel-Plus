@@ -10,6 +10,7 @@ import (
 	"os"
 	"path"
 	"strings"
+	"time"
 
 	"github.com/henrygd/beszel/internal/alerts"
 	"github.com/henrygd/beszel/internal/hub/config"
@@ -145,6 +146,11 @@ func (h *Hub) registerCronJobs(_ *core.ServeEvent) error {
 	h.Cron().MustAdd("delete old records", "8 * * * *", h.rm.DeleteOldRecords)
 	// create longer records every 10 minutes
 	h.Cron().MustAdd("create longer records", "*/10 * * * *", h.rm.CreateLongerRecords)
+	h.Cron().MustAdd("delete expired agent history", "18 * * * *", func() {
+		if err := systems.CleanupHistory(h, time.Now()); err != nil {
+			h.Logger().Warn("Agent history cleanup will retry", "err", err)
+		}
+	})
 	return nil
 }
 

@@ -3069,3 +3069,39 @@ msgstr "仅更新流量设置，保留连接配置与历史数据"
 #: src/components/routes/settings/import-systems.tsx
 msgid "Updates interface, quota, billing mode and period, display unit and enabled state. Connection settings, collector status and historical counters are preserved. Traffic-only files never create systems."
 msgstr "更新接口、配额、计费模式与周期、显示单位和启用状态。保留连接配置、采集状态及历史计数。仅流量文件不会新增系统。"
+
+#: src/components/routes/system/history-status.tsx
+msgid "Agent disconnected; showing the last synced cache."
+msgstr "Agent 已离线，显示最后同步的缓存。"
+
+#: src/components/routes/system/history-status.tsx
+msgid "Agent offline cache: 7 days, one sample per minute."
+msgstr "Agent 离线缓存：7 天，每分钟采样。"
+
+#: src/components/routes/system/history-status.tsx
+msgid "Available since"
+msgstr "可回溯至"
+
+#: src/components/routes/system/history-status.tsx
+msgid "Cached history could not be loaded. Live monitoring remains available."
+msgstr "缓存历史加载失败，实时监控仍可使用。"
+
+#: src/components/routes/system/history-status.tsx
+msgid "Cached samples synced."
+msgstr "缓存数据已同步。"
+
+#: src/components/routes/system/history-status.tsx
+msgid "Offline history is not enabled on this agent. Update to the Plus Agent to keep a seven-day local cache."
+msgstr "当前 Agent 未启用离线缓存。请使用新版 Plus Agent，以保留最近 7 天的本地样本。"
+
+#: src/components/routes/system/history-status.tsx
+msgid "Some history is unavailable because of a cache limit, storage error or an expired retention window. Missing samples are not treated as zero."
+msgstr "部分历史因容量限制、存储异常或超出保留期而不可用，缺失样本不会按零值处理。"
+
+#: src/components/routes/system/history-status.tsx
+msgid "Syncing cached samples…"
+msgstr "正在补传缓存数据…"
+
+#: src/components/routes/system/history-status.tsx
+msgid "Waiting for the first persisted sample."
+msgstr "等待首个样本保存到本地。"

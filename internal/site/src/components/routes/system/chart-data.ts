@@ -1,5 +1,7 @@
 import { getPbTimestamp, pb } from "@/lib/api"
 import { chartTimeData } from "@/lib/utils"
+import { getHistorySeries } from "@/lib/history-api"
+import { mergeHistory } from "@/lib/history-merge"
 import type {
 	ChartData,
 	ChartDataContainer,
@@ -59,15 +61,28 @@ export async function getStats<T extends SystemStatsRecord | ContainerStatsRecor
 	createdIsNumber?: boolean
 ): Promise<T[]> {
 	const lastCached = cachedStats?.at(-1)?.created as number
-	return await pb.collection<T>(collection).getFullList({
+	const recoverable = collection === "system_stats" || collection === "container_stats"
+	const normal = await pb.collection<T>(collection).getFullList({
 		filter: pb.filter("system={:id} && created > {:created} && type={:type}", {
 			id: systemId,
-			created: getPbTimestamp(chartTime, lastCached ? new Date(lastCached + 1000) : undefined, createdIsNumber),
+			created: getPbTimestamp(
+				chartTime,
+				!recoverable && lastCached ? new Date(lastCached + 1000) : undefined,
+				createdIsNumber
+			),
 			type: chartTimeData[chartTime].type,
 		}),
 		fields: "created,stats",
 		sort: "created",
 	})
+	if (!recoverable) return normal
+	try {
+		const history = await getHistorySeries(systemId, chartTime)
+		return mergeHistory(normal, history.points, collection === "container_stats")
+	} catch {
+		// Historical replay is optional; its failure cannot hide live monitoring.
+		return normal
+	}
 }
 
 export function makeContainerData(containers: ContainerStatsRecord[]): ChartDataContainer[] {

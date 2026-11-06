@@ -67,7 +67,7 @@ func setCollectionAuthSettings(app core.App) error {
 	}
 	systemsWriteRule := systemsReadRule + " && @request.auth.role != \"readonly\""
 	systemScopedWriteRule := systemScopedReadRule + " && @request.auth.role != \"readonly\""
-	if err := applyCollectionRules(app, []string{"traffic_sources", "traffic_daily", "traffic_settings"}, collectionRules{
+	if err := applyCollectionRules(app, []string{"traffic_sources", "traffic_daily", "traffic_settings", "agent_history_state", "agent_history_records"}, collectionRules{
 		list: &systemScopedReadRule,
 		view: &systemScopedReadRule,
 	}); err != nil {
