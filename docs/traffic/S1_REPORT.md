@@ -36,4 +36,4 @@
 
 S1尚无Hub流量持久化/API/UI，不能称为可用流量统计产品；生产vnstatd配置/现有库权限/UTC历史仍需部署时确认。旧版真实Hub二进制互操作与完整WS/SSH混合升级测试在S2/S5继续，不把旧类型单测当完整生产验收。最大16×400与256KiB分别限制，不承诺所有组合均能上报。
 
-GitHub工作流`Plus regression`运行原Agent/entities race、跨编译及Web基线；提交后核验运行结果再进入S2。S1报告所在commit及GitHub日志为阶段证据，不记录自引用SHA。
+首轮GitHub CI（42160012233）Agent/race/跨编译通过，Web构建通过、测试失败：既有token测试mock整个utils模块，Linux文件枚举顺序使mock泄漏到后续测试。已增加tests/run.sh逐文件隔离Bun进程，不修改断言；本地隔离执行22项通过。GitHub修复运行通过后进入S2。GitHub工作流`Plus regression`运行原Agent/entities race、跨编译及Web基线。S1报告所在commit及GitHub日志为阶段证据，不记录自引用SHA。
