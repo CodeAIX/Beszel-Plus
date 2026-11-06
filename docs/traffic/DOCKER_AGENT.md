@@ -1,4 +1,4 @@
-# Docker Agent 集成（S1）
+# Docker Agent 集成
 
 用户确认VPS Agent使用Docker，此需求将“受控Docker CLI集成”提升到P0；不再要求迁移systemd Agent。仅增加显式Plus镜像`internal/dockerfile_agent_plus`，原scratch/Alpine/GPU镜像定义保持不变。
 
@@ -25,10 +25,22 @@
 
 先按VPS_SETUP安装/验证宿主vnStat，再保留现有Agent的网络、KEY/TOKEN/HUB_URL、Docker socket与数据卷。使用`supplemental/traffic/compose.agent-traffic.override.yml`作为覆盖配置，服务名需与实际compose一致。
 
-- 设置实际已发布且测试通过的Plus Agent镜像/digest；当前S1仅本地镜像，没有正式生产发布tag。
+- 设置实际已发布且测试通过的Plus Agent镜像/digest；当前公开候选digest见CANDIDATE.md，尚未提升stable。
 - `VNSTAT_CONFIG_PATH`是daemon实际使用的宿主配置文件；容器内固定挂到/etc/vnstat.conf。如配置中DatabaseDir=/custom/path，则宿主目录与容器目标都要为该路径，不能不经核验硬改配置。
 - 共享目录需要服务账号可遍历、主库及现有WAL/SHM可读；按实际UID/GID或只读ACL授予权限，不chmod777，不为此添加privileged/root/NET_ADMIN。只读SQLite在部分权限/日志模式下可能失败，先运行CLI预检；失败不放开写挂载，保留原监控并报告permission_denied/exec_failed。
 - 原Agent默认运行用户不因本功能强制修改，以免破坏现有Docker socket/GPU读取。新增功能的非root、cap-drop ALL、no-new-privileges、只读卷能力必须独立实测。
 - 不自动重启生产容器、改vnstat.conf、改网络或替换自动更新源；部署前保留当前镜像/配置，以便退回。Hub先升级，之后逐台Agent。
 
 参考：[vnStat命令](https://humdi.net/vnstat/man/vnstat.html)、[UseUTC历史限制](https://humdi.net/vnstat/man/vnstat.conf.html)、[Docker只读挂载](https://docs.docker.com/engine/storage/bind-mounts/#use-a-read-only-bind-mount)。本地实测证据归入S1_REPORT；不将容器测试冒充生产VPS已验收。
+
+## 切换前只读预检
+
+设置模板所需变量并备份原Compose后，先运行一次CLI，不启动第二个Agent/daemon：
+
+```sh
+# 服务名/文件名需匹配真实部署；保留原用户与其他配置。
+docker compose -f compose.yml -f compose.agent-traffic.override.yml run --rm --no-deps --entrypoint vnstat beszel-agent --config /etc/vnstat.conf --showconfig
+docker compose -f compose.yml -f compose.agent-traffic.override.yml run --rm --no-deps --entrypoint vnstat beszel-agent --config /etc/vnstat.conf --json d --limit 0
+```
+
+确认UseUTC1、真实接口/updated、完整目录只读可读及可信UTC起始日后，才按部署计划切换。当前没有代用户执行生产切换。

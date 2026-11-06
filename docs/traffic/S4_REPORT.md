@@ -11,3 +11,7 @@
 验收发现并修复：settings在第一条上报前保存时应保持not_enabled；vnStat数据库重建应冻结旧generation及UTC有效起点，不能用新起点遮蔽Hub历史。补充对应回归测试，reset测试race通过。
 
 环境：独立Colima profile/context `beszel-plus`/`colima-beszel-plus`，不切换默认context；Hub限制2GB，127.0.0.1:18090；账号/DB/密钥在.gitignore覆盖的.plus-local内。未连接fnOS或生产VPS。24小时稳定性、生产账单对账和正式stable镜像未完成。
+
+下图为本地历史样例，不是生产VPS账单：
+
+![本地流量样例](images/traffic-local-test.jpg)

@@ -1,13 +1,25 @@
 # S5 发行与上游维护
 
-2026-11-06。已增加Plus独立版本/commit信息，协议版本仍为上游0.21.1。阻止Hub/Agent命令从官方release自更新二进制，避免覆盖Plus功能；CHECK_UPDATES不再提示官方升级。界面Footer指向Fork。Hub与Docker Agent使用固定Go/Alpine多架构manifest digest，构建时注入Plus身份/OCI标签，发行流水线保留SBOM与provenance。
+2026-11-06。已发布[首个测试候选](https://github.com/CodeAIX/Beszel-Plus/releases/tag/v0.21.1-plus.1-candidate.42168663335.1)，完整镜像digest/源码/测试链接见[CANDIDATE.md](CANDIDATE.md)。源码`85425f0da8ffa85d10fe1e11fc174e801f0abf5d`；后续提交只修正维护工作流与文档。
 
-`plus-release.yml`（手动或可复用）先构建Web/执行前端测试和Go全包race，再以2GB内存启动Hub、停止后完整复制数据目录、恢复至新容器并检查健康；成功后构建linux/amd64与linux/arm64的Hub/带vnStat CLI的Docker Agent。产物为唯一run ID候选tag、两个镜像digest、源码manifest、相对上游的二进制兼容patch、提交清单与SHA256SUMS。没有latest/stable自动别名。
+## 产品与验证
 
-`plus-upstream.yml`每天UTC03:19和手动查询官方稳定release，忽略预发布/草稿/旧版本。固定tag实际SHA，检测上游CombinedData key7占用，再三方合并保留补丁；新增上游workflow、文本冲突或协议测试不兼容则停止。候选分支不覆盖默认分支，显式调用同一验证/发行workflow后生成draft PR，避免依赖GITHUB_TOKEN引发的push触发链。已有同tag分支不重复建分支；失败后可手动对候选分支重跑Plus candidate images。不能承诺任意上游重构无人工适配。
+Plus独立版本/commit信息与上游协议版本分离，避免破坏semver能力门槛。Hub/Agent拒绝通过官方二进制自更新覆盖定制功能，关闭官方升级提示；Footer指向Fork。Go/Alpine基础镜像固定多架构manifest digest；两种镜像均提供linux/amd64、linux/arm64、OCI来源标签、SBOM/provenance。
 
-已执行本地：actionlint v1.7.12检查三份Plus workflow无错误；协议枚举0–9与CBOR字段冲突门禁、自更新保护测试通过；上游查询确认当前仍v0.21.1，正确输出build=false；本地新Hub镜像构建与2GB启动/完整目录备份/独立容器恢复成功。跨版本实测：Alpine CLI2.13以UID65534、只读卷读取Debian12/2.10与Ubuntu24.04/2.12数据库，interfaces/jsonversion及日计数逐值一致。导出补丁已在固定upstream SHA的干净源码上实际应用，collector/API/UI/Dockerfile与Plus源码相同。2GB/2CPU Linux容器首次写入3接口×400日共1200行约57.9ms（tmpfs测试，非磁盘性能承诺）。真实本地数据库完整恢复后认证、配额与历史汇总/日数组一致。
+前端31项测试、构建与Hub/迁移回归通过；本机完整Go race退出0（原有告警包606.263秒，首次默认600秒预算不足，显式20分钟后完整通过）。GitHub run42168663335的完整Go/Web门禁和镜像构建/启动/恢复均成功。只读CLI跨数据库版本：Alpine2.13读取Debian12/2.10、Ubuntu24.04/2.12，interfaces/jsonversion及日值一致。2GB/2CPU Linux容器首次写3接口×400日约57.9ms（tmpfs，非磁盘性能保证）。
 
-常规GitHub回归42167130350成功；手动上游检查42167164084成功并正确跳过当前v0.21.1。本机全包race因119个原有告警测试耗时触及默认10分钟上限，未出现断言/race失败；余下最后测试单独race通过（5.435s），其余包通过。首个Linux全包race同样因原有告警测试触及10分钟上限而中止（42167190007），images job正确跳过。已将预算显式增加至20分钟，第二次完整门禁42168663335进行中；不会绕过失败门禁发布。
+完整目录一致性备份恢复后认证、20GB配额、90天中的88条记录与2个空缺、账单汇总逐值相同。导出的patch已干净应用至固定上游SHA，collector/API/UI/Dockerfile与Plus一致。公开包页面、匿名OCI索引和空白Docker凭据的实际pull均通过，双平台齐全。本地已用公开digest替换测试Hub与Agent，版本/源码吻合、Agent up、traffic fresh、历史/配额保留。
 
-24小时稳定性观察和生产VPS账单对账尚未完成，首个发行保持candidate。当前只做本地测试，fnOS/VPS没有自动部署。
+## 自动维护与权限修正
+
+plus-upstream每天UTC03:19检查官方稳定release，跳过草稿/预发布/旧版本，固定真实SHA。key7被占用或三方合并/语义测试冲突即停，不覆盖默认分支。合并使用--no-commit，在生成merge commit前保留Fork已审查的workflow树；官方workflow差异存入supplemental/traffic/upstream-workflows.diff供审查，不激活继承的发布任务。保留官方提交父历史。已有同tag候选分支幂等跳过，失败时可手动重跑候选发行。
+
+候选在同一显式可复用流水线完成测试、2GB容器启动/完整目录恢复、镜像发行和draft PR流程，不依赖push/PR触发链。镜像版本由当前run/attempt生成，重跑不覆盖旧tag；artifact也按attempt分名。先核对workflow树与默认分支一致，再保留固定源tag，Release使用--verify-tag确认已有tag。发行记录含镜像digest、来源manifest、相对官方patch、提交列表与SHA256SUMS，不把patch自身反复提交回源码。
+
+首次镜像已发布后，Release API因源提交workflow与开发期间更新后的默认分支不同而403。[官方权限说明](https://docs.github.com/en/rest/releases/releases)明确GITHUB_TOKEN不能额外获得workflow写权限。已验证原测试/镜像/校验和与固定源tag，通过独立恢复工作流42171231148完成Release，没有重新构建或覆盖镜像。工作流修正通过actionlint/py_compile；权限实测42171535509以真实GITHUB_TOKEN完成含workflow变化的模拟上游三方合并、保留Fork工作流、push、固定tag和draft Release，再删除全部临时refs/draft。此后正常自动维护无需长期PAT。仓库默认token权限仍为read，只给对应维护/发行job所需写权限。
+
+上游当前仍v0.21.1，实际检查42167164084正确跳过；未伪造一次官方升级。不能承诺任意官方重构都无需人工。没有自动合并PR、提升stable或更新fnOS/生产VPS。
+
+## 观察状态
+
+24小时健康/资源观察已经在公开候选digest上启动（2026-11-06 06:04:43 UTC），最初样本health=true、traffic=ok。结束后生成本地summary.json，休眠/采样空缺会使连续观察不通过。当前尚未完成24小时、生产VPS账单对账或stable提升。

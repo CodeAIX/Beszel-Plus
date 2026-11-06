@@ -1,5 +1,7 @@
 # GitHub 补丁维护与镜像发布设计
 
+首个测试候选及权限修正见CANDIDATE.md和S5_REPORT.md。
+
 状态：S5已实现候选验证/双架构发行及上游稳定版定时检查；实际结果见S5_REPORT.md。正式Fork为[CodeAIX/Beszel-Plus](https://github.com/CodeAIX/Beszel-Plus)，展示名Beszel+，默认分支`plus/main`。上游`main`保留但不用于开发基线。
 
 ## 补丁式开发
@@ -12,7 +14,7 @@ manifest至少记录upstream repo/tag/commit、Plus commit/release、traffic sch
 
 1. `plus-upstream.yml`在默认分支定时查询官方稳定release，并提供workflow_dispatch；跳过draft/prerelease，不因日期新旧盲选tag，记录实际commit SHA；workflow concurrency按仓库串行、同一tag幂等。上游仓库发release不会直接触发Fork的release事件。
 2. 在临时候选分支从当前Plus稳定点三方合并固定的上游tag提交，保留扩展；没有force-push main、没有在无测试时同步覆盖默认分支。候选必须保留上游提交历史与merge SHA。
-3. 若文本冲突、上游已占CBOR key7/已有字段语义变化、schema/权限/工具链迁移未适配，则停止发布，保留运行诊断供维护者处理。编号冲突不能给新流量随意改key再继续，需兼容迁移计划。不能承诺任意官方升级无需人工。
+3. 官方workflow差异隔离保存、Fork工作流树保持已审查版本；若文本冲突、上游已占CBOR key7/已有字段语义变化、schema/权限/工具链迁移未适配，则停止发布，保留运行诊断供维护者处理。编号冲突不能给新流量随意改key再继续，需兼容迁移计划。不能承诺任意官方升级无需人工。
 4. 运行原版回归与A/H/C测试、Web测试/build、混合版本WS/SSH、migration副本/恢复、镜像启动/健康检查；构建linux/amd64、linux/arm64。升级差异影响部署/数据库时不能用旧测试报告替代新检查。
 5. 全部自动门禁通过后自动发布不可变候选版本和镜像，如`0.21.2-plus.1-candidate.1`，与固定Git SHA相连；生成候选PR。PR合并/标记stable的发布由同一流水线显式串接，防止GITHUB_TOKEN创建的push/PR不触发预期后续workflow而漏测。稳定发布需本次必测和所需灰度均通过。
 6. 本机拉取固定候选tag/digest测试（fnOS测试已暂缓）；首次及有协议/DB变化的版本完成灰度后才提升stable别名。自动发布镜像不等于自动更新现有fnOS容器；用户现有监控环境不挂Watchtower latest自动替换链。

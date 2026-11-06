@@ -1,9 +1,10 @@
 # Beszel+ 流量统计项目
 
-产品名Beszel+；GitHub仓库[CodeAIX/Beszel-Plus](https://github.com/CodeAIX/Beszel-Plus)。已实施S1–S4采集、存储、API和界面；S5候选镜像/上游维护流水线已接入；尚无正式发布的完整流量功能镜像。
+产品名Beszel+；GitHub仓库[CodeAIX/Beszel-Plus](https://github.com/CodeAIX/Beszel-Plus)。已实施S1–S4采集、存储、API和界面；S5候选镜像/上游维护流水线已接入；已发布P0测试候选，stable尚待24小时观察。
 
 | 文档 | 用途 |
 |---|---|
+| [CANDIDATE.md](CANDIDATE.md) | 当前可匿名拉取的固定镜像、源码与验收状态 |
 | [CODEX_START.md](CODEX_START.md) | 当前开发入口与阶段约束 |
 | [SPEC-v1.1.md](SPEC-v1.1.md) | 唯一当前实施规格；SPEC-v1.0保留历史 |
 | [REVIEW.md](REVIEW.md) | 审查结论、原文问题与修订决策 |
