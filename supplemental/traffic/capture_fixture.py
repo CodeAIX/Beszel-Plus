@@ -24,6 +24,11 @@ def command(*args):
     return result.stdout.decode()
 
 
+def config_pair(line):
+    # --showconfig comments settings that retain their default value.
+    return line.lstrip("#; \t").split()[:2]
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--output", required=True)
@@ -42,11 +47,11 @@ def main():
                        'TrafficlessEntries 1\nAlwaysAddNewInterfaces 0\n')
         version = command("vnstat", "--version").strip()
         effective = command("vnstat", "--config", str(cfg), "--showconfig")
-        assert any(line.split() == ["UseUTC", "1"] for line in effective.splitlines())
+        assert any(config_pair(line) == ["UseUTC", "1"] for line in effective.splitlines())
         zero = root / "non-utc.conf"
         zero.write_text(cfg.read_text().replace("UseUTC 1", "UseUTC 0"))
         rejected = command("vnstat", "--config", str(zero), "--showconfig")
-        assert any(line.split() == ["UseUTC", "0"] for line in rejected.splitlines())
+        assert any(config_pair(line) == ["UseUTC", "0"] for line in rejected.splitlines())
         command("vnstatd", "--config", str(cfg), "--initdb", "--noadd")
         names = sorted(p.name for p in Path("/sys/class/net").iterdir())
         selected = [name for name in names if name != "lo"][:1] + ["lo"]
@@ -95,9 +100,9 @@ def main():
         (output / "daily.json").write_text(fixture)
         keys = {"UseUTC", "DailyDays", "SaveInterval", "UpdateInterval", "TrafficlessEntries"}
         (output / "effective-config.txt").write_text("\n".join(
-            line for line in effective.splitlines() if line.split() and line.split()[0] in keys) + "\n")
+            line for line in effective.splitlines() if config_pair(line) and config_pair(line)[0] in keys) + "\n")
         (output / "non-utc-config.txt").write_text("\n".join(
-            line for line in rejected.splitlines() if line.split() and line.split()[0] == "UseUTC") + "\n")
+            line for line in rejected.splitlines() if config_pair(line) and config_pair(line)[0] == "UseUTC") + "\n")
         summary = {
             "vnstat_version": version, "jsonversion": data["jsonversion"],
             "non_root": True, "daemon_config_matches_cli": True,
