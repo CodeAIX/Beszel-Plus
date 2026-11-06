@@ -51,6 +51,7 @@ func NewHandlerRegistry() *HandlerRegistry {
 	}
 
 	registry.Register(common.GetData, &GetDataHandler{})
+	registry.Register(common.GetHistory, &GetHistoryHandler{})
 	registry.Register(common.CheckFingerprint, &CheckFingerprintHandler{})
 	registry.Register(common.GetContainerLogs, &GetContainerLogsHandler{})
 	registry.Register(common.GetContainerInfo, &GetContainerInfoHandler{})
@@ -111,6 +112,10 @@ func (h *GetDataHandler) Handle(hctx *HandlerContext) error {
 	response.Info.ConnectionType = hctx.ConnectionType
 	if hctx.Agent.trafficCollector != nil {
 		response.Traffic = hctx.Agent.trafficCollector.current.Load()
+	}
+	if hctx.Agent.history != nil {
+		info := hctx.Agent.history.info()
+		response.History = &info
 	}
 	return hctx.SendResponse(&response, hctx.RequestID)
 }

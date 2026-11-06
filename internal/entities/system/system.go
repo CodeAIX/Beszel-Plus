@@ -219,4 +219,5 @@ type CombinedData struct {
 	SystemdServicesUpdated bool                      `json:"systemdUpdated,omitzero" cbor:"5,keyasint,omitempty"`
 	Monitors               map[string]monitor.Result `cbor:"6,keyasint"`
 	Traffic                *traffic.Snapshot         `json:"traffic,omitempty" cbor:"7,keyasint,omitempty"`
+	History                *HistoryInfo              `json:"history,omitempty" cbor:"8,keyasint,omitempty"`
 }

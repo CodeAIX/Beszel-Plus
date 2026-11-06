@@ -62,6 +62,7 @@ type Agent struct {
 	packageUpdates            *packageUpdatesManager                                // Checks for pending package updates
 	lastHubRequest            atomic.Int64                                          // Wall clock Unix nanoseconds of the last hub stats request
 	trafficCollector          *vnStatCollector                                      // Optional immutable vnStat snapshots
+	history                   *agentHistory                                         // Seven-day durable ordinary metrics journal
 }
 
 // NewAgent creates a new agent with the given data directory for persisting data.
@@ -179,6 +180,7 @@ func NewAgent(dataDir ...string) (agent *Agent, err error) {
 
 	agent.packageUpdates = newPackageUpdatesManager(agent.dataDir)
 	agent.trafficCollector = newTrafficCollector()
+	agent.history = newAgentHistory(agent.dataDir)
 
 	// initialize GPU manager
 	agent.gpuManager, err = NewGPUManager()
@@ -207,6 +209,10 @@ func (a *Agent) hubIdleFor(d time.Duration) bool {
 }
 
 func (a *Agent) gatherStats(options common.DataRequestOptions) *system.CombinedData {
+	return a.gatherStatsInternal(options, false)
+}
+
+func (a *Agent) gatherStatsInternal(options common.DataRequestOptions, localOnly bool) *system.CombinedData {
 	a.Lock()
 	defer a.Unlock()
 
@@ -214,7 +220,12 @@ func (a *Agent) gatherStats(options common.DataRequestOptions) *system.CombinedD
 	data, isCached := a.cache.Get(cacheTimeMs)
 	if isCached {
 		slog.Debug("Cached data", "cacheTimeMs", cacheTimeMs)
-		return data
+		// Preserve upstream's cache-hit behavior when history is disabled. With
+		// autonomous sampling enabled, only the Hub may consume pending details.
+		if localOnly || a.history == nil {
+			return data
+		}
+		return a.attachSystemDetails(data, cacheTimeMs, options.IncludeDetails)
 	}
 
 	*data = system.CombinedData{
@@ -286,7 +297,13 @@ func (a *Agent) gatherStats(options common.DataRequestOptions) *system.CombinedD
 	slog.Debug("Extra FS", "data", data.Stats.ExtraFs)
 
 	a.cache.Set(data, cacheTimeMs)
+	if a.history != nil && cacheTimeMs == defaultDataCacheTimeMs {
+		a.history.enqueue(data)
+	}
 
+	if localOnly {
+		return data
+	}
 	return a.attachSystemDetails(data, cacheTimeMs, options.IncludeDetails)
 }
 

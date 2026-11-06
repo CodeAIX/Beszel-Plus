@@ -26,8 +26,13 @@ run("git", "fetch", "https://github.com/henrygd/beszel.git", "refs/tags/" + tag)
 sha = run("git", "rev-parse", "FETCH_HEAD^{commit}")
 upstream = run("git", "show", sha + ":internal/entities/system/system.go")
 body = upstream.split("type CombinedData struct {", 1)[1].split("\n}", 1)[0]
-if re.search(r'cbor:"7(?:,|")', body):
-    raise SystemExit("Upstream allocated CombinedData key 7; manual protocol migration required")
+for key in (7, 8):
+    if re.search(r'cbor:"' + str(key) + r'(?:,|")', body):
+        raise SystemExit(f"Upstream allocated CombinedData key {key}; manual protocol migration required")
+actions = run("git", "show", sha + ":internal/common/common-ws.go").split("const (", 1)[1].split("\n)", 1)[0]
+names = re.findall(r'^\s*([A-Z]\w*)\b', actions, re.M)
+if names != ["GetData", "CheckFingerprint", "GetContainerLogs", "GetContainerInfo", "GetSmartData", "GetSystemdInfo", "GetZfsData", "SyncNetworkMonitors", "GetPackageUpdates", "GetSystemdLogs"]:
+    raise SystemExit("Upstream action layout changed; verify reserved GetHistory action 10 before merging")
 run("git", "config", "user.name", "beszel-plus[bot]")
 run("git", "config", "user.email", "beszel-plus[bot]@users.noreply.github.com")
 run("git", "checkout", "-b", branch)

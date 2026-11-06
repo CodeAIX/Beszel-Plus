@@ -16,7 +16,7 @@ sha = git("rev-parse", "HEAD")
 out = Path(".plus-release"); out.mkdir(exist_ok=True)
 (out / "traffic.patch").write_bytes(subprocess.check_output(["git", "diff", "--binary", u["commit"], sha]))
 (out / "commits.txt").write_text(git("log", "--oneline", u["commit"] + ".." + sha) + "\n")
-u.update(plus_commit=sha, plus_version=version, test_run=os.environ.get("GITHUB_SERVER_URL", "https://github.com") + "/" + os.environ.get("GITHUB_REPOSITORY", "CodeAIX/Beszel-Plus") + "/actions/runs/" + os.environ.get("GITHUB_RUN_ID", "local"), platforms=["linux/amd64", "linux/arm64"], migrations=sorted(p.name for p in Path("internal/migrations").glob("*traffic*")), toolchain=Path("go.mod").read_text().splitlines()[2])
+u.update(plus_commit=sha, plus_version=version, test_run=os.environ.get("GITHUB_SERVER_URL", "https://github.com") + "/" + os.environ.get("GITHUB_REPOSITORY", "CodeAIX/Beszel-Plus") + "/actions/runs/" + os.environ.get("GITHUB_RUN_ID", "local"), platforms=["linux/amd64", "linux/arm64"], migrations=sorted(p.name for p in Path("internal/migrations").glob("*.go") if "traffic" in p.name or "agent_history" in p.name), toolchain=Path("go.mod").read_text().splitlines()[2])
 (out / "source-manifest.json").write_text(json.dumps(u, indent=2) + "\n")
 if os.environ.get("GITHUB_OUTPUT"):
     with open(os.environ["GITHUB_OUTPUT"], "a") as f: f.write(f"version={version}\nsha={sha}\n")

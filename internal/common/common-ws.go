@@ -30,6 +30,8 @@ const (
 	GetPackageUpdates
 	// Request recent logs for a systemd service from the agent.
 	GetSystemdLogs
+	// Read bounded pages of Agent's seven-day local metrics journal.
+	GetHistory
 	// Add new actions here...
 )
 
