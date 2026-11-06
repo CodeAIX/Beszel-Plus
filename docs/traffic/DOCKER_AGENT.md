@@ -44,3 +44,7 @@ docker compose -f compose.yml -f compose.agent-traffic.override.yml run --rm --n
 ```
 
 确认UseUTC1、真实接口/updated、完整目录只读可读及可信UTC起始日后，才按部署计划切换。当前没有代用户执行生产切换。
+
+## 七天资源缓存（plus/main）
+
+普通 CPU、内存、磁盘和 Docker 指标的持久化缓存已实现每分钟采样、最近 7 天和重连自动补传，默认容量 256 MiB。需升级包含此功能的新 Plus Agent 并保留 `/var/lib/beszel-agent` 原持久卷；仅升级 Hub 无法让原版 Agent 保存离线样本。缓存不依赖 vnStat，vnStat 流量日值仍独立处理。现有公开候选尚不含此功能，详细行为、环境变量和验收范围见 [七天离线缓存](../OFFLINE_HISTORY.md)。

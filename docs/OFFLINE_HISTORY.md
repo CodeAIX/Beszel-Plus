@@ -1,6 +1,6 @@
 # 七天离线缓存与恢复补传
 
-用户于 2026-11-06 选择最近 **7 天、每分钟一个样本**。Plus Agent 与 Hub 已实现缓存、分页补传和图表集成，当前处于本地与 CI 验证阶段。公开候选 `0.21.1-plus.1-candidate.42181555701.1` 尚不含本功能；仅升级 Hub 不会让原版 Agent 产生历史缓存。
+用户于 2026-11-06 选择最近 **7 天、每分钟一个样本**。Plus Agent 与 Hub 已实现缓存、分页补传和图表集成，本地与 GitHub CI 验证已通过，尚未发布新公共镜像。公开候选 `0.21.1-plus.1-candidate.42181555701.1` 尚不含本功能；仅升级 Hub 不会让原版 Agent 产生历史缓存。
 
 ## 使用行为
 
@@ -64,8 +64,29 @@ flowchart LR
 - 认证、成员/readonly 读取权限，禁止通过客户端伪造历史；旧响应形状与原 action 序号兼容。CPU 每核数组、电池元组兼容 JSON v1/v2 回读及旧字节字符串。
 - 独立 Docker 实测：Hub 停机约 195 秒，Agent 期间重启；3 条真实离线分钟样本（含 Docker）按原时间恢复，另补回 1 条停机前尚未确认的样本；再次重启 Hub 不重复。普通 system_stats 在停机区间确实为空，图表恢复来自独立补传数据。
 
-7 天边界与旧日期场景使用受控时间/样例验证；真实断线实测为上述约 195 秒，不宣称已经连续运行或停机实测 7 天。本机整包 `go test -race -tags=testing -p 2 -timeout 20m ./...`、前端 38 项回归、TypeScript 与生产构建通过。独立样例的 10,080 条七天分钟数据及全部图表层级成功入库，周图可同时展示系统与 Docker 历史；此压力样例不代表真实连续运行七天。GitHub CI 结果在最终验收中补录。本轮未修改 fnOS 或生产 VPS 的 Agent。
+7 天边界与旧日期场景使用受控时间/样例验证；真实断线实测为上述约 195 秒，不宣称已经连续运行或停机实测 7 天。本机整包 `go test -race -tags=testing -p 2 -timeout 20m ./...`、前端 38 项回归、TypeScript 与生产构建通过。独立样例的 10,080 条七天分钟数据及全部图表层级成功入库，周图可同时展示系统与 Docker 历史；此压力样例不代表真实连续运行七天。[GitHub 回归 42214559483](https://github.com/CodeAIX/Beszel-Plus/actions/runs/42214559483) 的 Agent 与 Web/Hub 两项任务均成功，包含 Linux amd64/arm64 Agent 构建和新增缓存模块的竞态回归。完整下游补丁已对固定上游重新执行 `git apply --check`，发布清单包含新迁移与协议版本。本轮未修改 fnOS 或生产 VPS 的 Agent。
 
 流量设置的单独与联合导入导出见 [IMPORT_SYSTEMS](IMPORT_SYSTEMS.md)；YAML 设置文件不携带本地缓存或全部监控历史，迁移完整 Hub 数据仍需完整数据目录备份。
 
 ![七天历史补齐周图，仅使用明确标注的模拟样例](images/history-seven-day-synthetic.png)
+
+## 本轮交付与预览
+
+功能源码 `23d275f81c6e4cdf7ee67f9d0048e5c89d26196b`，本地 Hub/Agent 测试镜像版本 `0.21.1-plus.1-history.2-local`。主预览 `http://127.0.0.1:18091` 已升级；升级前完整备份数据目录，之后确认原有 10 台 VPS 全部在线，系统地址、名称、授权、Hub 身份密钥、Agent 指纹/Token 和人工流量设置保持一致。未向该预览注入任何测试系统或测试配额。
+
+隔离实例 `http://127.0.0.1:18093` 用于 Plus Agent 与 Hub 的真实断线测试及明确标注的七天模拟图表。最终同一源码构建的两个容器重新创建后，既有缓存文件内容保持一致，新样本可继续同步。18090 的旧候选及其观察任务未切换，旧候选的观察结果不代表本次新增功能已经连续验收。
+
+既有 Docker Agent 获得本功能时需使用包含上述源码的 Plus Agent，并保留其原数据卷，例如原 Compose 应继续包含：
+
+```yaml
+services:
+  beszel-agent:
+    # 使用之后发布并验证过的新 Plus Agent 版本；旧候选不含七天缓存。
+    volumes:
+      - ./beszel_agent_data:/var/lib/beszel-agent
+    environment:
+      BESZEL_HISTORY_ENABLED: "true"
+      BESZEL_HISTORY_MAX_BYTES: "268435456"
+```
+
+此处仅展示缓存相关片段。沿用部署中已有的卷路径、KEY/TOKEN/HUB_URL、网络与 Docker socket 配置，合并片段时保留原有挂载和环境变量；不要换成空数据卷。本轮未升级真实 VPS 的 Agent。公共镜像的正式发布与部署记录应在实际发布后补充，不能用本地镜像标签代替公共版本。
