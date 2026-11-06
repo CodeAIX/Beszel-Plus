@@ -2965,3 +2965,102 @@ msgstr "User email not found; disable original user mapping or create the user f
 #: src/components/routes/settings/config-yaml.tsx
 msgid "Manage systems with config.yml (advanced)"
 msgstr ""
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "Apply imported traffic settings to existing systems"
+msgstr "Apply imported traffic settings to existing systems"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "Billing day"
+msgstr "Billing day"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "Current settings"
+msgstr "Current settings"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "Display unit"
+msgstr "Display unit"
+
+#: src/components/routes/settings/config-yaml.tsx
+msgid "Download YAML"
+msgstr "Download YAML"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "Enabled"
+msgstr "Enabled"
+
+#: src/components/routes/settings/config-yaml.tsx
+msgid "Export traffic settings only"
+msgstr "Export traffic settings only"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "Import an original Beszel or Beszel+ YAML export. Add systems in one batch, or restore traffic settings to matching systems."
+msgstr "Import an original Beszel or Beszel+ YAML export. Add systems in one batch, or restore traffic settings to matching systems."
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "Imported settings"
+msgstr "Imported settings"
+
+#. placeholder {0}: plan.created
+#. placeholder {1}: plan.updated
+#. placeholder {2}: plan.skip
+#: src/components/routes/settings/import-systems.tsx
+msgid "Imported: {0}. Traffic updated: {1}. Skipped: {2}."
+msgstr "Imported: {0}. Traffic updated: {1}. Skipped: {2}."
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "Inbound + outbound"
+msgstr "Inbound + outbound"
+
+#: src/components/routes/settings/config-yaml.tsx
+msgid "Include traffic settings in system configuration"
+msgstr "Include traffic settings in system configuration"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "Interface"
+msgstr "Interface"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "Invalid traffic settings"
+msgstr "Invalid traffic settings"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "Keep current traffic settings; enable traffic updates to apply this row"
+msgstr "Keep current traffic settings; enable traffic updates to apply this row"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "More than one existing system uses this address"
+msgstr "More than one existing system uses this address"
+
+#. placeholder {0}: plan.add
+#. placeholder {1}: plan.update
+#. placeholder {2}: plan.skip
+#. placeholder {3}: plan.errors
+#: src/components/routes/settings/import-systems.tsx
+msgid "New: {0}. Traffic updates: {1}. Skipped: {2}. Errors: {3}."
+msgstr "New: {0}. Traffic updates: {1}. Skipped: {2}. Errors: {3}."
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "No matching system; traffic-only import cannot create systems"
+msgstr "No matching system; traffic-only import cannot create systems"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "Repeated address with traffic settings; remove the duplicate row"
+msgstr "Repeated address with traffic settings; remove the duplicate row"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "Review traffic settings"
+msgstr "Review traffic settings"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "Traffic settings already match"
+msgstr "Traffic settings already match"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "Update traffic settings only; keep connection and history"
+msgstr "Update traffic settings only; keep connection and history"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "Updates interface, quota, billing mode and period, display unit and enabled state. Connection settings, collector status and historical counters are preserved. Traffic-only files never create systems."
+msgstr "Updates interface, quota, billing mode and period, display unit and enabled state. Connection settings, collector status and historical counters are preserved. Traffic-only files never create systems."

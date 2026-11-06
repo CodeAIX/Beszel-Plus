@@ -7,6 +7,8 @@ import { useState } from "react"
 import { $router } from "@/components/router"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "@/components/ui/use-toast"
@@ -16,14 +18,17 @@ import ImportSystems from "./import-systems"
 export default function ConfigYaml() {
 	const [configContent, setConfigContent] = useState<string>("")
 	const [isLoading, setIsLoading] = useState(false)
+	const [includeTraffic, setIncludeTraffic] = useState(true)
+	const [exportFormat, setExportFormat] = useState("combined")
 
 	const ButtonIcon = isLoading ? LoaderCircleIcon : FileSlidersIcon
 
-	async function fetchConfig() {
+	async function fetchConfig(format: string) {
 		try {
 			setIsLoading(true)
-			const { config } = await pb.send<{ config: string }>("/api/beszel/config-yaml", {})
+			const { config } = await pb.send<{ config: string }>("/api/beszel/config-yaml", { query: { format } })
 			setConfigContent(config)
+			setExportFormat(format)
 		} catch (error: any) {
 			toast({
 				title: t`Error`,
@@ -86,7 +91,8 @@ export default function ConfigYaml() {
 					<Textarea
 						dir="ltr"
 						autoFocus
-						defaultValue={configContent}
+						value={configContent}
+						readOnly
 						spellCheck="false"
 						rows={Math.min(25, configContent.split("\n").length)}
 						className="font-mono whitespace-pre"
@@ -94,10 +100,47 @@ export default function ConfigYaml() {
 				)}
 			</div>
 			<Separator className="my-5" />
-			<Button type="button" className="mt-2 flex items-center gap-1" onClick={fetchConfig} disabled={isLoading}>
-				<ButtonIcon className={clsx("h-4 w-4 me-0.5", isLoading && "animate-spin")} />
-				<Trans>Export configuration</Trans>
-			</Button>
+			<div className="flex items-center gap-2 my-4">
+				<Checkbox
+					id="export-include-traffic"
+					checked={includeTraffic}
+					onCheckedChange={(v) => setIncludeTraffic(v === true)}
+					disabled={isLoading}
+				/>
+				<Label htmlFor="export-include-traffic">
+					<Trans>Include traffic settings in system configuration</Trans>
+				</Label>
+			</div>
+			<div className="flex flex-wrap gap-3">
+				<Button
+					type="button"
+					className="flex items-center gap-1"
+					onClick={() => fetchConfig(includeTraffic ? "combined" : "classic")}
+					disabled={isLoading}
+				>
+					<ButtonIcon className={clsx("h-4 w-4 me-0.5", isLoading && "animate-spin")} />
+					<Trans>Export configuration</Trans>
+				</Button>
+				<Button type="button" variant="outline" onClick={() => fetchConfig("traffic")} disabled={isLoading}>
+					<Trans>Export traffic settings only</Trans>
+				</Button>
+				{configContent && (
+					<Button
+						type="button"
+						variant="outline"
+						onClick={() => {
+							const url = URL.createObjectURL(new Blob([configContent], { type: "text/yaml;charset=utf-8" }))
+							const link = document.createElement("a")
+							link.href = url
+							link.download = exportFormat === "traffic" ? "beszel-plus-traffic.yml" : "beszel-config.yml"
+							link.click()
+							setTimeout(() => URL.revokeObjectURL(url), 1000)
+						}}
+					>
+						<Trans>Download YAML</Trans>
+					</Button>
+				)}
+			</div>
 		</div>
 	)
 }

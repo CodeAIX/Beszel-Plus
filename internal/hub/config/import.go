@@ -18,6 +18,7 @@ import (
 	"uuid"
 
 	"github.com/henrygd/beszel/internal/entities/system"
+	"github.com/henrygd/beszel/internal/entities/traffic"
 	"github.com/pocketbase/pocketbase/core"
 	"gopkg.in/yaml.v3"
 )
@@ -28,18 +29,21 @@ const maxImportBytes = 1 << 20
 var importMu sync.Mutex
 
 type importRequest struct {
-	Config    string `json:"config"`
-	UserMode  string `json:"user_mode"`
-	Apply     bool   `json:"apply"`
-	PreviewID string `json:"preview_id"`
+	Config       string `json:"config"`
+	UserMode     string `json:"user_mode"`
+	Apply        bool   `json:"apply"`
+	PreviewID    string `json:"preview_id"`
+	ApplyTraffic bool   `json:"apply_traffic"`
 }
 
 type importRow struct {
-	Name   string `json:"name"`
-	Host   string `json:"host"`
-	Port   uint16 `json:"port"`
-	Action string `json:"action"`
-	Reason string `json:"reason,omitempty"`
+	Name           string            `json:"name"`
+	Host           string            `json:"host"`
+	Port           uint16            `json:"port"`
+	Action         string            `json:"action"`
+	Reason         string            `json:"reason,omitempty"`
+	Traffic        *traffic.Settings `json:"traffic,omitempty"`
+	CurrentTraffic *traffic.Settings `json:"current_traffic,omitempty"`
 }
 
 type importPlan struct {
@@ -48,6 +52,8 @@ type importPlan struct {
 	Skip      int         `json:"skip"`
 	Errors    int         `json:"errors"`
 	Created   int         `json:"created"`
+	Update    int         `json:"update"`
+	Updated   int         `json:"updated"`
 	PreviewID string      `json:"preview_id"`
 }
 
@@ -99,7 +105,7 @@ func ImportYamlConfig(e *core.RequestEvent) error {
 	err = e.App.RunInTransaction(func(tx core.App) error {
 		var items []plannedSystem
 		var err error
-		plan, items, err = planImport(tx, cfg, req.UserMode, e.Auth.Id)
+		plan, items, err = planImport(tx, cfg, req.UserMode, e.Auth.Id, req.ApplyTraffic)
 		if err != nil {
 			return err
 		}
@@ -115,6 +121,13 @@ func ImportYamlConfig(e *core.RequestEvent) error {
 			return err
 		}
 		for _, item := range items {
+			if item.Row.Action == "update_traffic" {
+				if err := savePortableTraffic(tx, item.Target, item.Config.Traffic); err != nil {
+					return err
+				}
+				plan.Updated++
+				continue
+			}
 			if item.Row.Action != "add" {
 				continue
 			}
@@ -133,6 +146,9 @@ func ImportYamlConfig(e *core.RequestEvent) error {
 				token = uuid.New().String()
 			}
 			if err := createFingerprintRecord(tx, record.Id, token); err != nil {
+				return err
+			}
+			if err := savePortableTraffic(tx, record.Id, item.Config.Traffic); err != nil {
 				return err
 			}
 			plan.Created++
@@ -166,6 +182,12 @@ func parseImport(content string) (config, error) {
 	if len(cfg.Systems) == 0 || len(cfg.Systems) > 1000 {
 		return cfg, errors.New("system count")
 	}
+	if (cfg.Kind != "" && cfg.Kind != "beszel-plus-config" && cfg.Kind != "beszel-plus-traffic") || cfg.TrafficSchema > 1 {
+		return cfg, errors.New("unsupported config schema")
+	}
+	if cfg.Kind != "" && cfg.TrafficSchema != 1 {
+		return cfg, errors.New("missing config schema")
+	}
 	return cfg, nil
 }
 
@@ -189,7 +211,7 @@ func invalidImportText(s string) bool {
 	return !utf8.ValidString(s) || strings.IndexFunc(s, unicode.IsControl) >= 0
 }
 
-func planImport(app core.App, cfg config, mode, owner string) (importPlan, []plannedSystem, error) {
+func planImport(app core.App, cfg config, mode, owner string, applyTraffic bool) (importPlan, []plannedSystem, error) {
 	plan := importPlan{Rows: make([]importRow, 0, len(cfg.Systems))}
 	users, err := app.FindAllRecords("users")
 	if err != nil {
@@ -204,8 +226,13 @@ func planImport(app core.App, cfg config, mode, owner string) (importPlan, []pla
 		return plan, nil, err
 	}
 	endpoints := map[string]string{}
+	ambiguous := map[string]bool{}
 	for _, s := range systems {
-		endpoints[importEndpoint(s.GetString("host"), s.GetString("port"))] = s.Id
+		key := importEndpoint(s.GetString("host"), s.GetString("port"))
+		if endpoints[key] != "" {
+			ambiguous[key] = true
+		}
+		endpoints[key] = s.Id
 	}
 	fingerprints, err := app.FindAllRecords("fingerprints")
 	if err != nil {
@@ -216,19 +243,45 @@ func planImport(app core.App, cfg config, mode, owner string) (importPlan, []pla
 		tokens[fp.GetString("token")] = fp.GetString("system")
 	}
 	items := make([]plannedSystem, 0, len(cfg.Systems))
+	seen := map[string]bool{}
 	for i, s := range cfg.Systems {
 		s.Name, s.Host = strings.TrimSpace(s.Name), strings.TrimSpace(s.Host)
 		if s.Port == 0 {
 			s.Port = 45876
 		}
 		item := plannedSystem{Config: s, Users: []string{owner}, Row: importRow{Name: s.Name, Host: s.Host, Port: s.Port, Action: "add"}}
+		item.Row.Traffic = s.Traffic
 		endpoint := importEndpoint(s.Host, strconv.Itoa(int(s.Port)))
 		if s.Name == "" || len(s.Name) > 255 || s.Host == "" || len(s.Host) > 1024 || invalidImportText(s.Name) || invalidImportText(s.Host) || strings.ContainsAny(s.Host, " \t") {
 			item.Row.Action, item.Row.Reason = "error", "invalid_system"
 		} else if s.Token != "" && (utf8.RuneCountInString(s.Token) < 9 || utf8.RuneCountInString(s.Token) > 255 || invalidImportText(s.Token) || strings.TrimSpace(s.Token) != s.Token) {
 			item.Row.Action, item.Row.Reason = "error", "invalid_token"
+		} else if s.Traffic != nil && s.Traffic.Validate() != nil {
+			item.Row.Action, item.Row.Reason = "error", "invalid_traffic"
+		} else if s.Traffic != nil && seen[endpoint] {
+			item.Row.Action, item.Row.Reason = "error", "duplicate_traffic"
 		} else if id := endpoints[endpoint]; id != "" {
 			item.Row.Action, item.Row.Reason, item.Target = "skip", "existing_endpoint", id
+			if s.Traffic != nil && applyTraffic {
+				if ambiguous[endpoint] {
+					item.Row.Action, item.Row.Reason = "error", "ambiguous_endpoint"
+				} else {
+					previous, err := readPortableTraffic(app, id)
+					if err != nil {
+						return plan, nil, err
+					}
+					item.Row.CurrentTraffic = previous
+					if previous == nil || *previous != *s.Traffic {
+						item.Row.Action, item.Row.Reason = "update_traffic", "update_traffic"
+					} else {
+						item.Row.Reason = "same_traffic"
+					}
+				}
+			} else if s.Traffic != nil {
+				item.Row.Reason = "traffic_not_applied"
+			}
+		} else if cfg.Kind == "beszel-plus-traffic" {
+			item.Row.Action, item.Row.Reason = "error", "unknown_endpoint"
 		} else if s.Token != "" && tokens[s.Token] != "" {
 			item.Row.Action, item.Row.Reason = "error", "token_conflict"
 		} else if mode == "match" && len(s.Users) > 0 {
@@ -246,6 +299,10 @@ func planImport(app core.App, cfg config, mode, owner string) (importPlan, []pla
 				}
 			}
 		}
+		if cfg.Kind == "beszel-plus-traffic" && s.Traffic == nil {
+			item.Row.Action, item.Row.Reason = "error", "invalid_traffic"
+		}
+		seen[endpoint] = true
 		switch item.Row.Action {
 		case "add":
 			plan.Add++
@@ -258,6 +315,8 @@ func planImport(app core.App, cfg config, mode, owner string) (importPlan, []pla
 			}
 		case "skip":
 			plan.Skip++
+		case "update_traffic":
+			plan.Update++
 		case "error":
 			plan.Errors++
 		}

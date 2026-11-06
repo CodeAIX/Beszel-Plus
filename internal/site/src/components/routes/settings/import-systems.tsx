@@ -8,14 +8,34 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { pb } from "@/lib/api"
+import { trafficBytes } from "@/lib/traffic-display"
 
-type ImportRow = { name: string; host: string; port: number; action: string; reason?: string }
+type PortableTraffic = {
+	iface: string
+	quota_bytes: number
+	count_mode: string
+	billing_day: number
+	billing_timezone: string
+	display_unit: "GB" | "GiB"
+	enabled: boolean
+}
+type ImportRow = {
+	name: string
+	host: string
+	port: number
+	action: string
+	reason?: string
+	traffic?: PortableTraffic
+	current_traffic?: PortableTraffic
+}
 type ImportPlan = {
 	rows: ImportRow[]
 	add: number
 	skip: number
 	errors: number
 	created: number
+	update: number
+	updated: number
 	preview_id: string
 }
 
@@ -33,15 +53,57 @@ function rowDescription(row: ImportRow) {
 			return t`Invalid token (9–255 characters required)`
 		case "generated_token":
 			return t`Add; a new token will be generated and must be configured on the agent`
+		case "invalid_traffic":
+			return t`Invalid traffic settings`
+		case "duplicate_traffic":
+			return t`Repeated address with traffic settings; remove the duplicate row`
+		case "ambiguous_endpoint":
+			return t`More than one existing system uses this address`
+		case "unknown_endpoint":
+			return t`No matching system; traffic-only import cannot create systems`
+		case "update_traffic":
+			return t`Update traffic settings only; keep connection and history`
+		case "same_traffic":
+			return t`Traffic settings already match`
+		case "traffic_not_applied":
+			return t`Keep current traffic settings; enable traffic updates to apply this row`
 		default:
 			return t`Add with existing token`
 	}
+}
+
+function TrafficSummary({ value }: { value: PortableTraffic }) {
+	return (
+		<ul className="text-xs space-y-1 mt-2">
+			<li>
+				<Trans>Interface</Trans>: {value.iface || "—"}
+			</li>
+			<li>
+				<Trans>Quota</Trans>: {trafficBytes(value.quota_bytes, value.display_unit)} (
+				{value.quota_bytes.toLocaleString()} B)
+			</li>
+			<li>
+				<Trans>Count mode</Trans>:{" "}
+				{value.count_mode === "tx" ? <Trans>Outbound only</Trans> : <Trans>Inbound + outbound</Trans>}
+			</li>
+			<li>
+				<Trans>Billing day</Trans>: {value.billing_day} ({value.billing_timezone})
+			</li>
+			<li>
+				<Trans>Display unit</Trans>: {value.display_unit}
+			</li>
+			<li>
+				<Trans>Enabled</Trans>: {value.enabled ? <Trans>Yes</Trans> : <Trans>No</Trans>}
+			</li>
+		</ul>
+	)
 }
 
 export default function ImportSystems() {
 	const fileInput = useRef<HTMLInputElement>(null)
 	const [content, setContent] = useState("")
 	const [matchUsers, setMatchUsers] = useState(false)
+	const [applyTraffic, setApplyTraffic] = useState(false)
 	const [plan, setPlan] = useState<ImportPlan | null>(null)
 	const [busy, setBusy] = useState(false)
 	const [done, setDone] = useState(false)
@@ -64,6 +126,7 @@ export default function ImportSystems() {
 					user_mode: matchUsers ? "match" : "current",
 					apply,
 					preview_id: plan?.preview_id ?? "",
+					apply_traffic: applyTraffic,
 				},
 			})
 			setPlan(result)
@@ -103,8 +166,8 @@ export default function ImportSystems() {
 				</h3>
 				<p className="text-sm text-muted-foreground leading-relaxed">
 					<Trans>
-						Import an original Beszel YAML export. New systems are added in one batch; existing addresses are skipped
-						and keep their settings, tokens and history.
+						Import an original Beszel or Beszel+ YAML export. Add systems in one batch, or restore traffic settings to
+						matching systems.
 					</Trans>
 				</p>
 			</div>
@@ -188,6 +251,28 @@ export default function ImportSystems() {
 					</p>
 				</div>
 			</div>
+			<div className="flex items-start gap-2">
+				<Checkbox
+					id="import-traffic-settings"
+					checked={applyTraffic}
+					disabled={busy}
+					onCheckedChange={(checked) => {
+						setApplyTraffic(checked === true)
+						resetPreview()
+					}}
+				/>
+				<div className="space-y-1">
+					<Label htmlFor="import-traffic-settings">
+						<Trans>Apply imported traffic settings to existing systems</Trans>
+					</Label>
+					<p className="text-sm text-muted-foreground">
+						<Trans>
+							Updates interface, quota, billing mode and period, display unit and enabled state. Connection settings,
+							collector status and historical counters are preserved. Traffic-only files never create systems.
+						</Trans>
+					</p>
+				</div>
+			</div>
 			{error && (
 				<p role="alert" className="text-sm text-destructive">
 					{error}
@@ -198,11 +283,11 @@ export default function ImportSystems() {
 					<p className="text-sm font-medium">
 						{done ? (
 							<Trans>
-								Imported: {plan.created}. Skipped: {plan.skip}.
+								Imported: {plan.created}. Traffic updated: {plan.updated}. Skipped: {plan.skip}.
 							</Trans>
 						) : (
 							<Trans>
-								New: {plan.add}. Skipped: {plan.skip}. Errors: {plan.errors}.
+								New: {plan.add}. Traffic updates: {plan.update}. Skipped: {plan.skip}. Errors: {plan.errors}.
 							</Trans>
 						)}
 					</p>
@@ -227,7 +312,32 @@ export default function ImportSystems() {
 										<td className="p-3 break-all">{row.name}</td>
 										<td className="p-3 break-all">{row.host.startsWith("/") ? row.host : `${row.host}:${row.port}`}</td>
 										<td className={`p-3 ${row.action === "error" ? "text-destructive" : "text-muted-foreground"}`}>
-											{done && row.action === "add" ? <Trans>Imported</Trans> : rowDescription(row)}
+											{done && (row.action === "add" || row.action === "update_traffic") ? (
+												<Trans>Imported</Trans>
+											) : (
+												rowDescription(row)
+											)}
+											{row.traffic && (
+												<details className="mt-2">
+													<summary className="cursor-pointer">
+														<Trans>Review traffic settings</Trans>
+													</summary>
+													{row.current_traffic && (
+														<div className="mt-2">
+															<span className="font-medium">
+																<Trans>Current settings</Trans>
+															</span>
+															<TrafficSummary value={row.current_traffic} />
+														</div>
+													)}
+													<div className="mt-2">
+														<span className="font-medium">
+															<Trans>Imported settings</Trans>
+														</span>
+														<TrafficSummary value={row.traffic} />
+													</div>
+												</details>
+											)}
 										</td>
 									</tr>
 								))}
@@ -241,7 +351,7 @@ export default function ImportSystems() {
 					<Trans>Preview import</Trans>
 				</Button>
 				{plan && !done && (
-					<Button disabled={busy || plan.errors > 0 || plan.add === 0} onClick={() => submit(true)}>
+					<Button disabled={busy || plan.errors > 0 || plan.add + plan.update === 0} onClick={() => submit(true)}>
 						<Trans>Confirm import</Trans>
 					</Button>
 				)}

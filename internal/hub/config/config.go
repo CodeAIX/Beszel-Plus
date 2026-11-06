@@ -9,6 +9,7 @@ import (
 	"uuid"
 
 	"github.com/henrygd/beszel/internal/entities/system"
+	"github.com/henrygd/beszel/internal/entities/traffic"
 
 	"github.com/pocketbase/dbx"
 	"github.com/pocketbase/pocketbase/core"
@@ -17,15 +18,18 @@ import (
 )
 
 type config struct {
-	Systems []systemConfig `yaml:"systems"`
+	Kind          string         `yaml:"kind,omitempty"`
+	TrafficSchema uint8          `yaml:"traffic_schema,omitempty"`
+	Systems       []systemConfig `yaml:"systems"`
 }
 
 type systemConfig struct {
-	Name  string   `yaml:"name"`
-	Host  string   `yaml:"host"`
-	Port  uint16   `yaml:"port,omitempty"`
-	Token string   `yaml:"token,omitempty"`
-	Users []string `yaml:"users"`
+	Name    string            `yaml:"name"`
+	Host    string            `yaml:"host"`
+	Port    uint16            `yaml:"port,omitempty"`
+	Token   string            `yaml:"token,omitempty"`
+	Users   []string          `yaml:"users,omitempty"`
+	Traffic *traffic.Settings `yaml:"traffic,omitempty"`
 }
 
 // Syncs systems with the config.yml file
@@ -162,6 +166,10 @@ func SyncSystems(e *core.ServeEvent) error {
 
 // Generates content for the config.yml file as a YAML string
 func generateYAML(h core.App) (string, error) {
+	return generateYAMLFormat(h, "classic")
+}
+
+func generateYAMLFormat(h core.App, format string) (string, error) {
 	// Fetch all systems from the database
 	systems, err := h.FindRecordsByFilter("systems", "id != ''", "name", -1, 0)
 	if err != nil {
@@ -171,6 +179,12 @@ func generateYAML(h core.App) (string, error) {
 	// Create a Config struct to hold the data
 	config := config{
 		Systems: make([]systemConfig, 0, len(systems)),
+	}
+	if format != "classic" {
+		config.Kind, config.TrafficSchema = "beszel-plus-config", 1
+		if format == "traffic" {
+			config.Kind = "beszel-plus-traffic"
+		}
 	}
 
 	// Fetch all users at once
@@ -218,6 +232,18 @@ func generateYAML(h core.App) (string, error) {
 			Users: userEmails,
 			Token: systemTokenMap[system.Id],
 		}
+		if format != "classic" {
+			sysConfig.Traffic, err = readPortableTraffic(h, system.Id)
+			if err != nil {
+				return "", err
+			}
+		}
+		if format == "traffic" {
+			if sysConfig.Traffic == nil {
+				continue
+			}
+			sysConfig.Token, sysConfig.Users = "", nil
+		}
 		config.Systems = append(config.Systems, sysConfig)
 	}
 
@@ -228,7 +254,11 @@ func generateYAML(h core.App) (string, error) {
 	}
 
 	// Add a header to the YAML
-	yamlData = append([]byte("# Values for port, users, and token are optional.\n# Defaults are port 45876, the first created user, and a generated UUID token.\n\n"), yamlData...)
+	header := "# Values for port, users, and token are optional.\n# Defaults are port 45876, the first created user, and a generated UUID token.\n\n"
+	if format != "classic" {
+		header = "# Beszel+ portable configuration. Import through Settings > YAML Config.\n# No monitoring history or Hub private key is included.\n\n"
+	}
+	yamlData = append([]byte(header), yamlData...)
 
 	return string(yamlData), nil
 }
@@ -279,7 +309,15 @@ func createFingerprintRecord(app core.App, systemID, token string) error {
 
 // Returns the current config.yml file as a JSON object
 func GetYamlConfig(e *core.RequestEvent) error {
-	configContent, err := generateYAML(e.App)
+	e.Response.Header().Set("Cache-Control", "no-store")
+	format := e.Request.URL.Query().Get("format")
+	if format == "" {
+		format = "classic"
+	}
+	if format != "classic" && format != "combined" && format != "traffic" {
+		return e.BadRequestError("Invalid export format", nil)
+	}
+	configContent, err := generateYAMLFormat(e.App, format)
 	if err != nil {
 		return err
 	}

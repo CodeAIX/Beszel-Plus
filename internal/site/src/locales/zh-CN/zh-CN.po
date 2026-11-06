@@ -2970,3 +2970,102 @@ msgstr "找不到原用户邮箱，请关闭原用户分配或先创建该用户
 #: src/components/routes/settings/config-yaml.tsx
 msgid "Manage systems with config.yml (advanced)"
 msgstr "使用 config.yml 管理系统（高级）"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "Apply imported traffic settings to existing systems"
+msgstr "将文件中的流量设置应用到已有系统"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "Billing day"
+msgstr "账单起始日"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "Current settings"
+msgstr "当前设置"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "Display unit"
+msgstr "显示单位"
+
+#: src/components/routes/settings/config-yaml.tsx
+msgid "Download YAML"
+msgstr "下载 YAML"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "Enabled"
+msgstr "启用"
+
+#: src/components/routes/settings/config-yaml.tsx
+msgid "Export traffic settings only"
+msgstr "仅导出流量设置"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "Import an original Beszel or Beszel+ YAML export. Add systems in one batch, or restore traffic settings to matching systems."
+msgstr "导入原版 Beszel 或 Beszel+ 导出的 YAML，批量新增系统，或为匹配的系统恢复流量设置。"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "Imported settings"
+msgstr "导入设置"
+
+#. placeholder {0}: plan.created
+#. placeholder {1}: plan.updated
+#. placeholder {2}: plan.skip
+#: src/components/routes/settings/import-systems.tsx
+msgid "Imported: {0}. Traffic updated: {1}. Skipped: {2}."
+msgstr "新增系统：{0}。更新流量设置：{1}。跳过：{2}。"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "Inbound + outbound"
+msgstr "入站 + 出站"
+
+#: src/components/routes/settings/config-yaml.tsx
+msgid "Include traffic settings in system configuration"
+msgstr "系统配置中包含流量设置"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "Interface"
+msgstr "网络接口"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "Invalid traffic settings"
+msgstr "流量设置无效"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "Keep current traffic settings; enable traffic updates to apply this row"
+msgstr "保留当前流量设置；勾选应用流量设置后才会更新"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "More than one existing system uses this address"
+msgstr "多个已有系统使用此地址，无法唯一匹配"
+
+#. placeholder {0}: plan.add
+#. placeholder {1}: plan.update
+#. placeholder {2}: plan.skip
+#. placeholder {3}: plan.errors
+#: src/components/routes/settings/import-systems.tsx
+msgid "New: {0}. Traffic updates: {1}. Skipped: {2}. Errors: {3}."
+msgstr "新增系统：{0}。更新流量设置：{1}。跳过：{2}。错误：{3}。"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "No matching system; traffic-only import cannot create systems"
+msgstr "没有匹配的系统；仅流量文件不会新增系统"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "Repeated address with traffic settings; remove the duplicate row"
+msgstr "含流量设置的地址重复，请移除重复行"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "Review traffic settings"
+msgstr "查看流量设置变更"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "Traffic settings already match"
+msgstr "流量设置相同，无需更新"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "Update traffic settings only; keep connection and history"
+msgstr "仅更新流量设置，保留连接配置与历史数据"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "Updates interface, quota, billing mode and period, display unit and enabled state. Connection settings, collector status and historical counters are preserved. Traffic-only files never create systems."
+msgstr "更新接口、配额、计费模式与周期、显示单位和启用状态。保留连接配置、采集状态及历史计数。仅流量文件不会新增系统。"

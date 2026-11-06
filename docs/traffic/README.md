@@ -4,7 +4,8 @@
 
 | 文档 | 用途 |
 |---|---|
-| [导入已有系统](../IMPORT_SYSTEMS.md) | YAML 增量导入、去重与已有 Agent 接入边界 |
+| [导入已有系统](../IMPORT_SYSTEMS.md) | 系统/流量设置单独或联合迁移、去重与 Agent 接入边界 |
+| [断线数据与补传](../OFFLINE_HISTORY.md) | vnStat 已有补齐机制与普通指标缓存待确认方案 |
 | [CANDIDATE.md](CANDIDATE.md) | 当前可匿名拉取的固定镜像、源码与验收状态 |
 | [UI_COMPACT_COLUMN.md](UI_COMPACT_COLUMN.md) | 已发布的紧凑流量列、双色进度条与列顺序 |
 | [CODEX_START.md](CODEX_START.md) | 当前开发入口与阶段约束 |
