@@ -11,6 +11,7 @@ import (
 
 	"github.com/henrygd/beszel/internal/entities/monitor"
 	"github.com/henrygd/beszel/internal/entities/system"
+	"github.com/henrygd/beszel/internal/entities/traffic"
 	"github.com/henrygd/beszel/internal/hub/expirymap"
 
 	"github.com/henrygd/beszel/internal/common"
@@ -57,6 +58,7 @@ type SystemManager struct {
 	realtimeWorkerRun   bool                                  // Whether a realtime worker has been started
 	ctx                 context.Context                       // Cancelled when the app terminates
 	cancel              context.CancelFunc                    // Cancels ctx and all child system contexts
+	traffic             *trafficWriter                        // Optional bounded, independent persistence
 }
 
 // hubLike defines the interface requirements for the hub dependency.
@@ -83,6 +85,7 @@ func NewSystemManager(hub hubLike) *SystemManager {
 		activeSubscriptions: make(map[string]*subscriptionInfo),
 	}
 	sm.ctx, sm.cancel = context.WithCancel(context.Background())
+	sm.traffic = &trafficWriter{manager: sm, pending: make(map[string]*traffic.Snapshot)}
 	return sm
 }
 
@@ -148,6 +151,9 @@ func (sm *SystemManager) bindEventHooks() {
 // onTerminate cancels SystemManager context on app shutdown
 func (sm *SystemManager) onTerminate(e *core.TerminateEvent) error {
 	sm.cancel()
+	if sm.traffic != nil {
+		sm.traffic.stop()
+	}
 	sm.stopRealtimeWorker()
 	return e.Next()
 }

@@ -190,6 +190,9 @@ func (sys *System) update() error {
 
 	// create system records
 	_, err = sys.createRecords(data)
+	if err == nil && data.Traffic != nil && sys.manager.traffic != nil {
+		sys.manager.traffic.enqueue(sys.Id, data.Traffic)
+	}
 
 	// if details were included and fetched successfully, mark details as fetched and update smart interval if set by agent
 	if err == nil && data.Details != nil {
@@ -931,8 +934,13 @@ func (sys *System) fetchDataViaSSH(options common.DataRequestOptions) (*system.C
 			_ = stdin.Close()
 
 			var resp common.AgentResponse
-			if decErr := cbor.NewDecoder(stdout).Decode(&resp); decErr == nil && resp.SystemData != nil {
-				*data = *resp.SystemData
+			if decErr := cbor.NewDecoder(stdout).Decode(&resp); decErr == nil {
+				if resp.Error != "" {
+					return false, errors.New(resp.Error)
+				}
+				if err := transport.UnmarshalResponse(resp, common.GetData, data); err != nil {
+					return false, err
+				}
 				if err := session.Wait(); err != nil {
 					return false, err
 				}
