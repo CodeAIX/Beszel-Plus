@@ -8,6 +8,7 @@ import (
 	"net"
 	"net/http"
 	"net/http/httptest"
+	"path/filepath"
 	"testing"
 	"time"
 
@@ -53,6 +54,10 @@ func TestAgentCancellationJoinsReconnect(t *testing.T) {
 	t.Setenv("BESZEL_AGENT_TOKEN", "test-token")
 	a := createTestAgent(t)
 	opts := createTestServerOptions(t)
+	// Reconnect cancellation is transport independent. Use a private Unix socket
+	// to avoid transient TCP port reuse; the preceding test covers TCP release.
+	opts.Network = "unix"
+	opts.Addr = filepath.Join(t.TempDir(), "reconnect.sock")
 	_, key, err := ed25519.GenerateKey(nil)
 	require.NoError(t, err)
 	signer, err := ssh.NewSignerFromKey(key)
@@ -64,7 +69,7 @@ func TestAgentCancellationJoinsReconnect(t *testing.T) {
 	go func() { done <- a.Start(ctx, opts) }()
 	var client *ssh.Client
 	require.Eventually(t, func() bool {
-		client, err = ssh.Dial("tcp", opts.Addr, &ssh.ClientConfig{
+		client, err = ssh.Dial(opts.Network, opts.Addr, &ssh.ClientConfig{
 			User: "test", Auth: []ssh.AuthMethod{ssh.PublicKeys(signer)},
 			HostKeyCallback: ssh.InsecureIgnoreHostKey(), Timeout: time.Second,
 		})
@@ -86,7 +91,7 @@ func TestAgentCancellationJoinsReconnect(t *testing.T) {
 		t.Fatal("agent did not join its pending reconnect")
 	}
 	require.False(t, cm.isConnectingNow())
-	listener, err := net.Listen("tcp", opts.Addr)
+	listener, err := net.Listen(opts.Network, opts.Addr)
 	require.NoError(t, err)
 	require.NoError(t, listener.Close())
 }
