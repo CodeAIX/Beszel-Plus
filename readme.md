@@ -1,6 +1,6 @@
 # Beszel+
 
-> Downstream vnStat traffic accounting extension. Current stage: Agent, independent Hub persistence and traffic APIs implemented; native UI integration is pending. No complete Plus feature image has been released. See [project documentation](docs/traffic/README.md), [review](docs/traffic/REVIEW.md), and [local testing plan](docs/traffic/LOCAL_TESTING.md). The upstream project description follows.
+> Downstream vnStat traffic accounting extension. Implemented: optional Docker Agent collector, independent Hub persistence, authorized billing APIs and native traffic UI. Candidate image publishing and stable-upstream merge workflows are included; stable promotion requires local observation. See [project documentation](docs/traffic/README.md), [review](docs/traffic/REVIEW.md), and [local testing plan](docs/traffic/LOCAL_TESTING.md). The upstream project description follows.
 
 Beszel is a lightweight server monitoring platform that includes Docker statistics, historical data, and alert functions.
 

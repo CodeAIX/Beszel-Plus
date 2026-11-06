@@ -1,6 +1,6 @@
 # Beszel+ 流量统计项目
 
-产品名Beszel+；GitHub仓库[CodeAIX/Beszel-Plus](https://github.com/CodeAIX/Beszel-Plus)。已实施S1 Agent/协议、S2 Hub持久化和S3 API/算法，S4 UI与本地Docker验证已完成，当前推进发行流水线；尚无正式发布的完整流量功能镜像。
+产品名Beszel+；GitHub仓库[CodeAIX/Beszel-Plus](https://github.com/CodeAIX/Beszel-Plus)。已实施S1–S4采集、存储、API和界面；S5候选镜像/上游维护流水线已接入；尚无正式发布的完整流量功能镜像。
 
 | 文档 | 用途 |
 |---|---|
@@ -8,6 +8,7 @@
 | [SPEC-v1.1.md](SPEC-v1.1.md) | 唯一当前实施规格；SPEC-v1.0保留历史 |
 | [REVIEW.md](REVIEW.md) | 审查结论、原文问题与修订决策 |
 | [IMPLEMENTATION_MAP.md](IMPLEMENTATION_MAP.md) | 固定上游源码挂载点、工具链及最小改动 |
+| [S5_REPORT.md](S5_REPORT.md) | 候选发行、双架构镜像、补丁与自动上游合并 |
 | [S4_REPORT.md](S4_REPORT.md) | 流量界面、精确配额、桌面/窄屏与本地Docker验证 |
 | [S3_REPORT.md](S3_REPORT.md) | 认证API、账单周期、权限与数据质量 |
 | [S2_REPORT.md](S2_REPORT.md) | Hub独立持久化、队列、幂等及双通道验证 |

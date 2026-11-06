@@ -1,6 +1,6 @@
 # GitHub 补丁维护与镜像发布设计
 
-状态：设计契约，S0尚未实现自动跟随/Plus发行镜像。正式Fork为[CodeAIX/Beszel-Plus](https://github.com/CodeAIX/Beszel-Plus)，展示名Beszel+，默认分支`plus/main`。上游`main`保留但不用于开发基线。
+状态：S5已实现候选验证/双架构发行及上游稳定版定时检查；实际结果见S5_REPORT.md。正式Fork为[CodeAIX/Beszel-Plus](https://github.com/CodeAIX/Beszel-Plus)，展示名Beszel+，默认分支`plus/main`。上游`main`保留但不用于开发基线。
 
 ## 补丁式开发
 
@@ -21,12 +21,12 @@ workflow schedule可能延迟，公共repo无活动60天会被停用，需可见
 
 ## CI与发布凭证
 
-- S0只启用`Plus S0 vnStat verification`；继承的Docker、GoReleaser、Helm、issue清理等工作流在Fork中先禁用，防误触发上游地址或不必要发布。以后按Plus范围逐一替换/启用。
+- 目前启用`Plus regression`、`Plus candidate images`、`Plus upstream stable check`及手动fixture工作流；继承的Docker、GoReleaser、Helm、issue清理等工作流在Fork中先禁用，防误触发上游地址或不必要发布。以后按Plus范围逐一替换/启用。
 - 自动验证内容只读权限；发布job才给packages:write；改分支/建PR的job单独给contents/pull-requests权限。第三方action固定已核验commit。来自Fork PR的代码不在有发布secrets的上下文执行，不用pull_request_target执行不可信代码。
-- GHCR首选`GITHUB_TOKEN`，不要求用户交出长期PAT。镜像名使用小写，计划Hub为`ghcr.io/codeaix/beszel-plus/beszel`，未来Agent可为同namespace下beszel-agent；这些是计划名称，目前不存在可部署Plus镜像。
+- GHCR首选`GITHUB_TOKEN`，不要求用户交出长期PAT。镜像名使用小写，Hub为`ghcr.io/codeaix/beszel-plus/beszel`，Agent为同namespace下beszel-agent；只有发行成功后的固定候选tag/digest可用于测试。
 - 固定版如`0.21.1-plus.1`，候选与stable别名分开；部署记录用digest。首次GHCR package可能为private，要验证/设置公开并测试匿名拉取，不能只假设public repo即public镜像。
 - 保留SBOM/provenance、commit标签、sha256和测试记录。打tag触发的原上游工作流不作为Plus质量门禁。
 
 ## 阶段安排
 
-S1增加Agent/protocol CI；S2/S3数据库、权限、账单用例；S4完整Web验证；S5增加Plus镜像发布和上游跟随。S0可以准备隔离fixture CI，但不提前发布没有流量功能的“完成版”镜像。
+S1–S4功能和本地验证已完成，S5流水线已实现；24小时观察/生产对账及stable提升为独立后续门禁。当前自动发布候选，不自动合并PR、提升stable或更改运行中的容器。

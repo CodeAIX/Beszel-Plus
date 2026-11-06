@@ -4,7 +4,7 @@
 
 - Fork：CodeAIX/Beszel-Plus；默认开发分支 plus/main。origin 为 Fork，upstream 为 henrygd/beszel。
 - 实施基线：v0.21.1，commit e2ed147a5aa6472e6462521632ccc7101668132c；不得换成滚动 main。
-- 用户已授权开始实施。S1实现见S1_REPORT；VPS Agent确定为Docker，DOCKER_AGENT.md所述受控只读CLI集成提升到P0。按阶段提交/验证，只有前一阶段必测通过后继续后续阶段，无需重复询问已授权开发。
+- 用户已授权开始实施。S1–S5实现/验证分别见阶段REPORT；候选测试不等于stable或生产验收；VPS Agent确定为Docker，DOCKER_AGENT.md所述受控只读CLI集成提升到P0。按阶段提交/验证，只有前一阶段必测通过后继续后续阶段，无需重复询问已授权开发。
 - P0：一台 VPS 一个计费网卡、UTC 日粒度、账单日1–28、绝对值幂等 upsert；保留来源与完整性证据，缺失不填0。
 - 不修改原网络吞吐、历史采样、既有 CBOR key/动作编号；当前 CombinedData key7可用，每次上游升级重新检查。新增故障不能卡住原采集、使正常指标回滚或误报离线。
 - 所有新 API/集合按 systems.users/SHARE_ALL_SYSTEMS 与 readonly 授权；UI 不能写统计真值。
