@@ -59,7 +59,6 @@ jobs:
       contents: write
       packages: write
     env:
-      PLUS_VERSION: ${{ needs.verify.outputs.version }}
       PLUS_SHA: ${{ needs.verify.outputs.sha }}
       GH_TOKEN: ${{ github.token }}
     steps:
@@ -68,6 +67,8 @@ jobs:
           ref: ${{ needs.verify.outputs.sha }}
           fetch-depth: 0
           persist-credentials: false
+      - name: Reserve immutable publication identity and verified tag
+        run: python3 scripts/plus/prepare_release.py
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: '26.7.0'
@@ -134,7 +135,7 @@ jobs:
           Path('.plus-release/notes.md').write_text('Beszel+ candidate '+os.environ['PLUS_VERSION']+'\n\nTested source: '+os.environ['PLUS_SHA']+'\n\n'+''.join('- '+k+': `'+v+'`\n' for k,v in d['images'].items())+'\nCandidate only; no stable/latest alias or automatic production deployment. UTC vnStat setup and local observation remain required.\n')
           PYCODE
           (cd .plus-release && sha256sum traffic.patch commits.txt source-manifest.json > SHA256SUMS)
-          gh release create "v$PLUS_VERSION" --target "$PLUS_SHA" --prerelease --title "Beszel+ $PLUS_VERSION" --notes-file .plus-release/notes.md .plus-release/traffic.patch .plus-release/commits.txt .plus-release/source-manifest.json .plus-release/SHA256SUMS
+          gh release create "v$PLUS_VERSION" --verify-tag --prerelease --title "Beszel+ $PLUS_VERSION" --notes-file .plus-release/notes.md .plus-release/traffic.patch .plus-release/commits.txt .plus-release/source-manifest.json .plus-release/SHA256SUMS
       - name: Save publication evidence
         if: always()
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6

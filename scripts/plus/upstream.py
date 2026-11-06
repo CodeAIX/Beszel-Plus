@@ -33,14 +33,14 @@ run("git", "config", "user.email", "beszel-plus[bot]@users.noreply.github.com")
 run("git", "checkout", "-b", branch)
 previous = run("git", "rev-parse", "HEAD")
 subprocess.run(["git", "merge", "--no-ff", "--no-edit", sha], check=True)
-# New inherited workflows have no prior disabled state in this fork. Stop
-# before pushing so an upstream release workflow cannot publish accidentally.
-new_workflows = run("git", "diff", "--name-only", "--diff-filter=A", previous, "HEAD", "--", ".github/workflows")
-if new_workflows:
-    raise SystemExit("Review/disable new inherited workflows before pushing: " + new_workflows)
+# Keep fork workflows unchanged: GITHUB_TOKEN cannot write upstream workflow
+# changes, and inherited publishing must never activate in a candidate branch.
+workflow_diff = run("git", "diff", previous, "HEAD", "--", ".github/workflows")
+Path("supplemental/traffic/upstream-workflows.diff").write_text(workflow_diff + "\n")
+run("git", "restore", "--source=" + previous, "--staged", "--worktree", "--", ".github/workflows")
 current.update(tag=tag, commit=sha)
 Path("supplemental/traffic/upstream.json").write_text(json.dumps(current, indent=2) + "\n")
-run("git", "add", "supplemental/traffic/upstream.json")
+run("git", "add", "supplemental/traffic/upstream.json", "supplemental/traffic/upstream-workflows.diff", ".github/workflows")
 run("git", "commit", "-m", "chore(plus): record upstream " + tag)
 run("git", "push", "origin", branch)
 output("build", "true"); output("ref", run("git", "rev-parse", "HEAD")); output("branch", branch)
