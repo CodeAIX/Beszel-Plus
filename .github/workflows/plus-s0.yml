@@ -1,0 +1,39 @@
+name: Plus S0 vnStat verification
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  real-fixtures:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - distro: debian12
+            image: debian:12-slim
+          - distro: debian13
+            image: debian:13-slim
+          - distro: ubuntu24
+            image: ubuntu:24.04
+    container: ${{ matrix.image }}
+    steps:
+      - name: Install test environment dependencies
+        run: |
+          apt-get update -qq
+          DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends vnstat python3 ca-certificates git
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Capture real output as an unprivileged user
+        run: |
+          runuser -u nobody -- python3 supplemental/traffic/capture_fixture.py --output /tmp/plus-fixture
+          cp /etc/os-release /tmp/plus-fixture/os-release.txt
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: vnstat-${{ matrix.distro }}
+          path: /tmp/plus-fixture/
+          if-no-files-found: error
+          retention-days: 30
