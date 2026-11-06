@@ -252,3 +252,23 @@ func TestTrafficWriterBoundsAndCoalesces(t *testing.T) {
 	w.stop()
 	sys.manager.updaters.Wait()
 }
+
+func TestTrafficCatchupAfterHubOutage(t *testing.T) {
+	sys, app := newTestSystemWithHub(t)
+	old := trafficTestSnapshot()
+	old.ObservedAt -= 3 * 24 * 3600
+	old.Interfaces[0].SourceUpdatedAt = old.ObservedAt
+	old.Interfaces[0].Days = old.Interfaces[0].Days[:27]
+	require.NoError(t, SaveTrafficSnapshot(t.Context(), app, sys.Id, old))
+	require.Len(t, trafficRecords(t, app, "traffic_daily", sys.Id), 27)
+	resumed := trafficTestSnapshot()
+	require.NoError(t, SaveTrafficSnapshot(t.Context(), app, sys.Id, resumed))
+	require.NoError(t, SaveTrafficSnapshot(t.Context(), app, sys.Id, resumed))
+	rows := trafficRecords(t, app, "traffic_daily", sys.Id)
+	require.Len(t, rows, 30)
+	var total int64
+	for _, row := range rows {
+		total += row.GetInt64("rx_bytes") + row.GetInt64("tx_bytes")
+	}
+	require.Equal(t, int64(9000), total)
+}
