@@ -43,7 +43,7 @@ docker compose pull beszel-agent
 docker compose up -d --no-deps beszel-agent
 ```
 
-服务名以实际部署为准。详细步骤、备份、fnOS 图形界面、docker run 与回退说明见 [Docker 更新指南]({repo}/blob/v{v}/docs/UPGRADE.md)。YAML 导出不含 Hub 私钥或监控历史，不能代替完整数据备份。
+服务名以实际部署为准。详细步骤、备份、fnOS 图形界面、docker run 与回退说明见 [Docker 更新指南]({repo}/blob/plus/main/docs/UPGRADE.md)。YAML 导出不含 Hub 私钥或监控历史，不能代替完整数据备份。
 
 默认缓存目标 7 天、压缩容量上限 256 MiB；容量不足会提前清理并提示。不能补回启用之前、Agent/VPS 停机期间或已经淘汰的数据。普通缓存不依赖 vnStat；流量日统计仍需宿主 vnstatd 和原有只读挂载。
 
