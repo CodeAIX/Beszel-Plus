@@ -1,0 +1,60 @@
+name: Plus upstream stable check
+on:
+  schedule:
+    - cron: '19 3 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: plus-upstream-stable
+  cancel-in-progress: false
+jobs:
+  prepare:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      pull-requests: write
+    outputs:
+      build: ${{ steps.merge.outputs.build }}
+      ref: ${{ steps.merge.outputs.ref }}
+      branch: ${{ steps.merge.outputs.branch }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: plus/main
+          fetch-depth: 0
+      - name: Check release and preserve patches with a three-way merge
+        id: merge
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 scripts/plus/upstream.py
+      - name: Record check
+        if: always()
+        run: echo "Upstream check finished. Review this run for selected tag, conflicts or existing candidate branch." >> "$GITHUB_STEP_SUMMARY"
+  candidate:
+    needs: prepare
+    if: needs.prepare.outputs.build == 'true'
+    permissions:
+      contents: write
+      packages: write
+    uses: ./.github/workflows/plus-release.yml
+    with:
+      source_ref: ${{ needs.prepare.outputs.ref }}
+  review:
+    needs: [prepare, candidate]
+    if: always() && needs.prepare.outputs.build == 'true'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      pull-requests: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      CANDIDATE_BRANCH: ${{ needs.prepare.outputs.branch }}
+      RESULT: ${{ needs.candidate.result }}
+    steps:
+      - name: Open draft upgrade review with test result
+        run: |
+          printf 'Stable upstream merge preserving Beszel+ patches.\n\nCandidate workflow result: %s.\nRun: https://github.com/%s/actions/runs/%s\n\nReview protocol/database changes and local observation before merging. No production deployment or stable alias is performed.\n' "$RESULT" "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID" > /tmp/plus-review.md
+          gh pr create --base plus/main --head "$CANDIDATE_BRANCH" --draft --title "Upgrade Beszel+ from stable upstream" --body-file /tmp/plus-review.md

@@ -228,12 +228,16 @@ func (h *Hub) getInfo(e *core.RequestEvent) error {
 		Key         string `json:"key"`
 		Version     string `json:"v"`
 		CheckUpdate bool   `json:"cu"`
+		PlusVersion string `json:"plus_version"`
+		PlusCommit  string `json:"plus_commit"`
 	}
 	info := infoResponse{
-		Key:     h.pubKey,
-		Version: beszel.Version,
+		Key:         h.pubKey,
+		Version:     beszel.Version,
+		PlusVersion: beszel.PlusVersion,
+		PlusCommit:  beszel.PlusCommit,
 	}
-	if optIn, _ := utils.GetEnv("CHECK_UPDATES"); optIn == "true" {
+	if optIn, _ := utils.GetEnv("CHECK_UPDATES"); optIn == "true" && !beszel.IsPlus {
 		info.CheckUpdate = true
 	}
 	return e.JSON(http.StatusOK, info)
@@ -241,6 +245,9 @@ func (h *Hub) getInfo(e *core.RequestEvent) error {
 
 // getUpdate checks for the latest release on GitHub and returns update info if a newer version is available
 func (info *UpdateInfo) getUpdate(e *core.RequestEvent) error {
+	if beszel.IsPlus {
+		return e.JSON(http.StatusOK, &UpdateInfo{})
+	}
 	if time.Since(info.lastCheck) < 6*time.Hour {
 		return e.JSON(http.StatusOK, info)
 	}

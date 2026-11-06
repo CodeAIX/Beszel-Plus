@@ -13,6 +13,7 @@ import (
 type PublicAppInfo struct {
 	BASE_PATH           string
 	HUB_VERSION         string
+	PLUS_VERSION        string
 	HUB_URL             string
 	OAUTH_DISABLE_POPUP bool `json:"OAUTH_DISABLE_POPUP,omitzero"`
 }
@@ -57,9 +58,10 @@ func isAppRoute(urlPath, basePath string) bool {
 func getPublicAppInfo(hub *Hub) PublicAppInfo {
 	parsedURL, _ := url.Parse(hub.appURL)
 	info := PublicAppInfo{
-		BASE_PATH:   strings.TrimSuffix(parsedURL.Path, "/") + "/",
-		HUB_VERSION: beszel.Version,
-		HUB_URL:     hub.appURL,
+		BASE_PATH:    strings.TrimSuffix(parsedURL.Path, "/") + "/",
+		HUB_VERSION:  beszel.Version,
+		PLUS_VERSION: beszel.PlusVersion,
+		HUB_URL:      hub.appURL,
 	}
 	if val, _ := utils.GetEnv("OAUTH_DISABLE_POPUP"); val == "true" {
 		info.OAUTH_DISABLE_POPUP = true

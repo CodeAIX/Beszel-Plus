@@ -27,7 +27,7 @@ npm ci --ignore-scripts
 npm run build
 sh tests/run.sh
 cd ../..
-docker --context colima-beszel-plus build -f internal/dockerfile_hub -t beszel-plus:local .
+docker --context colima-beszel-plus build -f internal/dockerfile_hub_plus -t beszel-plus:local .
 docker --context colima-beszel-plus compose -f supplemental/traffic/compose.local.yml up -d
 docker --context colima-beszel-plus compose -f supplemental/traffic/compose.local.yml ps
 ```

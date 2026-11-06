@@ -6,6 +6,7 @@ declare global {
 	var BESZEL: {
 		BASE_PATH: string
 		HUB_VERSION: string
+		PLUS_VERSION: string
 		HUB_URL: string
 		OAUTH_DISABLE_POPUP: boolean
 	}

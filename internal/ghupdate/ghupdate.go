@@ -82,6 +82,9 @@ type updater struct {
 }
 
 func Update(config Config) (updated bool, err error) {
+	if beszel.IsPlus {
+		return false, fmt.Errorf("Beszel+ uses versioned Docker images; pull and recreate the container instead of installing an upstream binary")
+	}
 	p := &updater{
 		currentVersion: beszel.Version,
 		config:         config,

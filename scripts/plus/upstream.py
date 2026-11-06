@@ -1,0 +1,46 @@
+#!/usr/bin/env python3
+"""Prepare a reviewable three-way merge; conflicts stop before publication."""
+import json, os, re, subprocess, sys
+from pathlib import Path
+
+def run(*args):
+    return subprocess.check_output(args, text=True).strip()
+
+def output(key, value):
+    if os.environ.get("GITHUB_OUTPUT"):
+        with open(os.environ["GITHUB_OUTPUT"], "a") as f: f.write(f"{key}={value}\n")
+    print(f"{key}={value}")
+
+current = json.loads(Path("supplemental/traffic/upstream.json").read_text())
+latest = json.loads(run("gh", "api", "repos/henrygd/beszel/releases/latest"))
+tag = latest["tag_name"]
+if latest["draft"] or latest["prerelease"] or not re.fullmatch(r"v[0-9]+\.[0-9]+\.[0-9]+", tag):
+    raise SystemExit("Latest release is not a supported stable tag")
+version = lambda value: tuple(map(int, value.removeprefix("v").split(".")))
+if version(tag) <= version(current["tag"]):
+    output("build", "false"); output("checked_tag", tag); sys.exit(0)
+branch = "plus/upstream-" + tag
+if run("git", "ls-remote", "--heads", "origin", branch):
+    output("build", "false"); output("existing_branch", branch); sys.exit(0)
+run("git", "fetch", "https://github.com/henrygd/beszel.git", "refs/tags/" + tag)
+sha = run("git", "rev-parse", "FETCH_HEAD^{commit}")
+upstream = run("git", "show", sha + ":internal/entities/system/system.go")
+body = upstream.split("type CombinedData struct {", 1)[1].split("\n}", 1)[0]
+if re.search(r'cbor:"7(?:,|")', body):
+    raise SystemExit("Upstream allocated CombinedData key 7; manual protocol migration required")
+run("git", "config", "user.name", "beszel-plus[bot]")
+run("git", "config", "user.email", "beszel-plus[bot]@users.noreply.github.com")
+run("git", "checkout", "-b", branch)
+previous = run("git", "rev-parse", "HEAD")
+subprocess.run(["git", "merge", "--no-ff", "--no-edit", sha], check=True)
+# New inherited workflows have no prior disabled state in this fork. Stop
+# before pushing so an upstream release workflow cannot publish accidentally.
+new_workflows = run("git", "diff", "--name-only", "--diff-filter=A", previous, "HEAD", "--", ".github/workflows")
+if new_workflows:
+    raise SystemExit("Review/disable new inherited workflows before pushing: " + new_workflows)
+current.update(tag=tag, commit=sha)
+Path("supplemental/traffic/upstream.json").write_text(json.dumps(current, indent=2) + "\n")
+run("git", "add", "supplemental/traffic/upstream.json")
+run("git", "commit", "-m", "chore(plus): record upstream " + tag)
+run("git", "push", "origin", branch)
+output("build", "true"); output("ref", run("git", "rev-parse", "HEAD")); output("branch", branch)

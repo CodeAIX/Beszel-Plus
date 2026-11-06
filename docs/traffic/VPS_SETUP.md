@@ -14,7 +14,7 @@ ip -brief link
 vnstat --showconfig 2>/dev/null | grep -E '^[#;[:space:]]*(UseUTC|DatabaseDir|DailyDays|SaveInterval|TrafficlessEntries)[[:space:]]' || true
 ```
 
-同时确认Beszel Agent为systemd还是Docker。只安装vnStat不会升级Agent；Plus Agent产物尚未发布时不要提前设置自定义Agent下载地址。
+本项目已确认VPS Agent采用Docker。只安装vnStat不会升级Agent；后续需使用带vnStat CLI的Plus Agent候选镜像，按DOCKER_AGENT.md合并只读挂载。先本地测试，不自动修改现有VPS。
 
 ## Ubuntu 24.04 / Debian 12、13 安装
 
@@ -43,6 +43,6 @@ sudo -u <实际Agent服务用户> vnstat --config <已核验的绝对配置路�
 sudo -u <实际Agent服务用户> vnstat --config <已核验的绝对配置路径> --json d --limit 0
 ```
 
-配置若不是默认路径，后续Plus Agent需要使用已实现并测试的配置路径选项；当前尚无该功能，不能靠虚构环境变量声称已设置。网卡计费选择在Hub中单选已上报来源，不能将公网、Tailscale、Docker计数叠加。
+Plus Agent已实现`BESZEL_TRAFFIC_VNSTAT_CONFIG`，容器内默认`/etc/vnstat.conf`；模板将实际daemon配置只读挂载到此路径，同时将真实DatabaseDir整个目录挂载至相同绝对路径。配置中的UseUTC1及`BESZEL_TRAFFIC_UTC_VALID_FROM=YYYY-MM-DD`均必需。Docker用户使用`docker exec --user <Agent实际UID:GID> <Agent容器> vnstat --config /etc/vnstat.conf --json d --limit 0`验证权限，无需在宿主安装systemd Agent。网卡计费选择在Hub中单选已上报来源，不能将公网、Tailscale、Docker计数叠加。
 
 只向GitHub提交脱敏fixture/版本/关键配置证明，禁止提交实际IP、主机别名、令牌、SSH密钥、数据库或全量环境。生产VPS权限和24小时灰度与CI测试分别记录。

@@ -21,6 +21,9 @@ __debug_*
 # Git and version control
 .git
 .gitignore
+.plus-local/
+.env
+.env.*
 
 # Documentation and supplemental files
 *.md
@@ -46,3 +49,5 @@ Thumbs.db
 # .NET build artifacts
 agent/lhm/obj
 agent/lhm/bin
+
+.plus-release/

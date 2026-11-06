@@ -1,0 +1,145 @@
+name: Plus candidate images
+on:
+  workflow_dispatch:
+    inputs:
+      source_ref:
+        description: Repository commit or candidate branch to verify and publish
+        default: plus/main
+        required: true
+        type: string
+  workflow_call:
+    inputs:
+      source_ref:
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: plus-candidate-${{ inputs.source_ref }}
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    outputs:
+      sha: ${{ steps.source.outputs.sha }}
+      version: ${{ steps.source.outputs.version }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ inputs.source_ref }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7
+        with:
+          go-version-file: go.mod
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '26.7.0'
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+        with:
+          bun-version: '1.3.11'
+      - run: npm ci --ignore-scripts && npm run build && sh tests/run.sh
+        working-directory: internal/site
+      - run: go test -race -p 2 -tags=testing ./...
+      - name: Export patch and fixed source identity
+        id: source
+        run: python3 scripts/plus/export.py
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: plus-source
+          path: .plus-release/*
+          include-hidden-files: true
+          retention-days: 90
+  images:
+    needs: verify
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    permissions:
+      contents: write
+      packages: write
+    env:
+      PLUS_VERSION: ${{ needs.verify.outputs.version }}
+      PLUS_SHA: ${{ needs.verify.outputs.sha }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ needs.verify.outputs.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '26.7.0'
+      - run: npm ci --ignore-scripts && npm run build
+        working-directory: internal/site
+      - uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4.4.0
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+      - name: Build local Hub for start and restore gate
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: .
+          file: internal/dockerfile_hub_plus
+          platforms: linux/amd64
+          load: true
+          tags: beszel-plus:verify
+          build-args: |
+            PLUS_VERSION=${{ env.PLUS_VERSION }}
+            PLUS_COMMIT=${{ env.PLUS_SHA }}
+      - name: Start, back up and restore isolated Hub
+        run: python3 scripts/plus/smoke.py beszel-plus:verify
+      - name: Log in to GHCR
+        run: printf '%s' "$GH_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+      - name: Publish Hub
+        id: hub
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: .
+          file: internal/dockerfile_hub_plus
+          platforms: linux/amd64,linux/arm64
+          push: true
+          provenance: mode=max
+          sbom: true
+          tags: ghcr.io/codeaix/beszel-plus/beszel:${{ env.PLUS_VERSION }}
+          build-args: |
+            PLUS_VERSION=${{ env.PLUS_VERSION }}
+            PLUS_COMMIT=${{ env.PLUS_SHA }}
+      - name: Publish Docker Agent with vnStat CLI
+        id: agent
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: .
+          file: internal/dockerfile_agent_plus
+          platforms: linux/amd64,linux/arm64
+          push: true
+          provenance: mode=max
+          sbom: true
+          tags: ghcr.io/codeaix/beszel-plus/beszel-agent:${{ env.PLUS_VERSION }}
+          build-args: |
+            PLUS_VERSION=${{ env.PLUS_VERSION }}
+            PLUS_COMMIT=${{ env.PLUS_SHA }}
+      - name: Export release and exact image digests
+        env:
+          HUB_DIGEST: ${{ steps.hub.outputs.digest }}
+          AGENT_DIGEST: ${{ steps.agent.outputs.digest }}
+        run: |
+          python3 scripts/plus/export.py
+          python3 - <<'PYCODE'
+          import json, os
+          from pathlib import Path
+          p=Path('.plus-release/source-manifest.json')
+          d=json.loads(p.read_text())
+          d['images']={k: 'ghcr.io/codeaix/beszel-plus/'+name+'@'+os.environ[k.upper()+'_DIGEST'] for k,name in [('hub','beszel'),('agent','beszel-agent')]}
+          p.write_text(json.dumps(d,indent=2)+'\n')
+          Path('.plus-release/notes.md').write_text('Beszel+ candidate '+os.environ['PLUS_VERSION']+'\n\nTested source: '+os.environ['PLUS_SHA']+'\n\n'+''.join('- '+k+': `'+v+'`\n' for k,v in d['images'].items())+'\nCandidate only; no stable/latest alias or automatic production deployment. UTC vnStat setup and local observation remain required.\n')
+          PYCODE
+          (cd .plus-release && sha256sum traffic.patch commits.txt source-manifest.json > SHA256SUMS)
+          gh release create "v$PLUS_VERSION" --target "$PLUS_SHA" --prerelease --title "Beszel+ $PLUS_VERSION" --notes-file .plus-release/notes.md .plus-release/traffic.patch .plus-release/commits.txt .plus-release/source-manifest.json .plus-release/SHA256SUMS
+      - name: Save publication evidence
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: plus-publication
+          path: .plus-release/*
+          include-hidden-files: true
+          retention-days: 90

@@ -24,3 +24,5 @@ dockerfile_agent_dev
 .tmp
 # Local Beszel+ test binaries, databases, credentials and reports.
 /.plus-local/
+
+/.plus-release/
