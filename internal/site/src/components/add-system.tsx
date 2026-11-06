@@ -15,7 +15,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { isReadOnlyUser, pb } from "@/lib/api"
+import { isAdmin, isReadOnlyUser, pb } from "@/lib/api"
 import { SystemStatus } from "@/lib/enums"
 import { $publicKey } from "@/lib/stores"
 import { cn, generateToken, tokenMap, useBrowserStorage } from "@/lib/utils"
@@ -123,6 +123,15 @@ export const SystemDialog = ({ setOpen, system }: { setOpen: (open: boolean) => 
 				setHostValue(system?.host ?? "")
 			}}
 		>
+			{!system && isAdmin() && (
+				<Link
+					href={getPagePath($router, "settings", { name: "config" })}
+					onClick={() => setOpen(false)}
+					className="link text-sm mr-8"
+				>
+					<Trans>Import existing systems from YAML</Trans>
+				</Link>
+			)}
 			<Tabs value={tab} onValueChange={setTab}>
 				<DialogHeader>
 					<DialogTitle className="mb-1 pb-1 max-w-100 truncate pr-8">

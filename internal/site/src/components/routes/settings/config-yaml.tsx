@@ -11,6 +11,7 @@ import { Separator } from "@/components/ui/separator"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "@/components/ui/use-toast"
 import { isAdmin, pb } from "@/lib/api"
+import ImportSystems from "./import-systems"
 
 export default function ConfigYaml() {
 	const [configContent, setConfigContent] = useState<string>("")
@@ -40,9 +41,11 @@ export default function ConfigYaml() {
 
 	return (
 		<div>
+			<ImportSystems />
+			<Separator className="my-6" />
 			<div>
 				<h3 className="text-xl font-medium mb-2">
-					<Trans>YAML Configuration</Trans>
+					<Trans>Export configuration</Trans>
 				</h3>
 				<p className="text-sm text-muted-foreground leading-relaxed">
 					<Trans>Export your current systems configuration.</Trans>
@@ -50,7 +53,10 @@ export default function ConfigYaml() {
 			</div>
 			<Separator className="my-4" />
 			<div className="space-y-2">
-				<div className="mb-4">
+				<details className="mb-4">
+					<summary className="text-sm cursor-pointer py-1">
+						<Trans>Manage systems with config.yml (advanced)</Trans>
+					</summary>
 					<p className="text-sm text-muted-foreground leading-relaxed my-1">
 						<Trans>
 							Systems may be managed in a <code className="bg-muted rounded-sm px-1 text-primary">config.yml</code> file
@@ -75,7 +81,7 @@ export default function ConfigYaml() {
 							</p>
 						</AlertDescription>
 					</Alert>
-				</div>
+				</details>
 				{configContent && (
 					<Textarea
 						dir="ltr"

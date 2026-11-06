@@ -2857,3 +2857,116 @@ msgstr "是"
 #: src/components/routes/settings/layout.tsx
 msgid "Your user settings have been updated."
 msgstr "已更新您的使用者設定"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "Add with existing token"
+msgstr "新增，沿用原 Token"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "Add; a new token will be generated and must be configured on the agent"
+msgstr "新增；將生成新 Token，需在 Agent 中配置"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "Already listed; keep existing settings and token"
+msgstr "已存在，保留現有設置與 Token"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "By default, new systems belong to the current administrator. Email matching requires every listed user to exist in this Hub."
+msgstr "預設將新增系統歸屬當前管理员。按郵箱匹配時，原用戶必須已在當前面板中存在。"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "Choose a YAML export (up to 1 MiB)"
+msgstr "選择 YAML 導出文件（最大 1 MiB）"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "Confirm import"
+msgstr "確認匯入"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "Import an original Beszel YAML export. New systems are added in one batch; existing addresses are skipped and keep their settings, tokens and history."
+msgstr "匯入原版 Beszel 導出的 YAML，批量添加已有系統。已存在的地址会跳過，并保留原有設置、Token 和歷史數据。"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "Import existing systems"
+msgstr "匯入已有系統"
+
+#: src/components/add-system.tsx
+msgid "Import existing systems from YAML"
+msgstr "从 YAML 匯入已有系統"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "Import failed. No systems were imported. Check your connection and administrator access, then preview again."
+msgstr "匯入失敗，未匯入任何系統。請檢查連接和管理员權限後重新預覽。"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "Imported"
+msgstr "已匯入"
+
+#. placeholder {0}: plan.created
+#. placeholder {1}: plan.skip
+#: src/components/routes/settings/import-systems.tsx
+msgid "Imported: {0}. Skipped: {1}."
+msgstr "已匯入：{0}。已跳過：{1}。"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "Importing adds connection settings, not monitoring history or the Hub key. Existing agents must trust this Hub's public key; WebSocket agents must also use this Hub's URL. Reinstalling the agent is unnecessary."
+msgstr "匯入僅添加連接配置，不含監控歷史和 Hub 密鑰。已有 Agent 需信任當前 Hub 公鑰；WebSocket 連接还需使用當前 Hub 地址，無需重新安装 Agent。"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "Invalid name or host"
+msgstr "名称或主機地址無效"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "Invalid token (9–255 characters required)"
+msgstr "Token 無效（需為 9–255 個字符）"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "Invalid YAML. Use an original Beszel export with 1–1000 systems, at most 1 MiB. Check names, hosts, ports, tokens and users."
+msgstr "YAML 無效。請使用原版 Beszel 導出格式，包含 1–1000 個系統，且不超過 1 MiB。請檢查名称、主機地址、端口、Token 和用戶字段。"
+
+#. placeholder {0}: plan.add
+#. placeholder {1}: plan.skip
+#. placeholder {2}: plan.errors
+#: src/components/routes/settings/import-systems.tsx
+msgid "New: {0}. Skipped: {1}. Errors: {2}."
+msgstr "新增：{0}。跳過：{1}。錯誤：{2}。"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "Or paste YAML"
+msgstr "或粘贴 YAML"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "Preserve original user assignments by email"
+msgstr "按郵箱保留原有用戶分配"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "Preview import"
+msgstr "預覽匯入"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "The file exceeds 1 MiB."
+msgstr "文件超過 1 MiB。"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "The import preview changed. Review the new preview before confirming again."
+msgstr "匯入預覽已變化，請核對新的預覽後再次確認。"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "This Hub uses config.yml startup sync. Remove or migrate that file before importing; otherwise the next restart could delete imported systems."
+msgstr "當前 Hub 使用 config.yml 啟动同步。請先移除或迁移该文件，否则下次重啟可能刪除匯入的系統。"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "Token is already assigned to another address"
+msgstr "Token 已被另一個地址使用"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "Unable to read the selected file."
+msgstr "無法讀取所選文件。"
+
+#: src/components/routes/settings/import-systems.tsx
+msgid "User email not found; disable original user mapping or create the user first"
+msgstr "找不到原用戶郵箱，請關閉原用戶分配或先创建该用戶"
+
+#: src/components/routes/settings/config-yaml.tsx
+msgid "Manage systems with config.yml (advanced)"
+msgstr "使用 config.yml 管理系統（進階）"
