@@ -1,0 +1,22 @@
+# Merge with the existing VPS Agent compose; do not replace its keys, socket,
+# data volume, networking or other monitoring options. See DOCKER_AGENT.md.
+services:
+  beszel-agent:
+    image: ${BESZEL_PLUS_AGENT_IMAGE:?Set a tested Plus Agent image and digest}
+    environment:
+      BESZEL_TRAFFIC_ENABLED: "true"
+      BESZEL_TRAFFIC_VNSTAT_CONFIG: /etc/vnstat.conf
+      BESZEL_TRAFFIC_UTC_VALID_FROM: ${VNSTAT_UTC_VALID_FROM:?Set the verified first UTC day}
+    volumes:
+      - type: bind
+        source: ${VNSTAT_CONFIG_PATH:?Set the actual absolute daemon config path}
+        target: /etc/vnstat.conf
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ${VNSTAT_DATABASE_DIR:?Set the DatabaseDir used by vnstatd}
+        target: ${VNSTAT_DATABASE_DIR:?Set the DatabaseDir used by vnstatd}
+        read_only: true
+        bind:
+          create_host_path: false

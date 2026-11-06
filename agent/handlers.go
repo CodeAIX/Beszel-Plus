@@ -109,6 +109,9 @@ func (h *GetDataHandler) Handle(hctx *HandlerContext) error {
 	// Set the transport on the response copy, not on the cached data.
 	response := *sysStats
 	response.Info.ConnectionType = hctx.ConnectionType
+	if hctx.Agent.trafficCollector != nil {
+		response.Traffic = hctx.Agent.trafficCollector.current.Load()
+	}
 	return hctx.SendResponse(&response, hctx.RequestID)
 }
 

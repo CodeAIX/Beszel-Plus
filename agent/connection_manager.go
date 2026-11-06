@@ -193,6 +193,10 @@ func (c *ConnectionManager) Start(ctx context.Context, serverOptions ServerOptio
 	sigCtx, stopSignals := signal.NotifyContext(ctx, syscall.SIGINT, syscall.SIGTERM)
 	defer stopSignals()
 	c.ctx = sigCtx
+	if c.agent.trafficCollector != nil {
+		stopTraffic := c.agent.trafficCollector.start(sigCtx)
+		defer stopTraffic()
+	}
 
 	c.startWsTicker()
 	defer c.stopWsTicker()

@@ -9,6 +9,7 @@ import (
 	"github.com/henrygd/beszel/internal/entities/container"
 	"github.com/henrygd/beszel/internal/entities/monitor"
 	"github.com/henrygd/beszel/internal/entities/systemd"
+	"github.com/henrygd/beszel/internal/entities/traffic"
 )
 
 // WiFi describes a currently connected station interface. Keys in WiFi maps are
@@ -217,4 +218,5 @@ type CombinedData struct {
 	// that omitted systemd data (for example, a short-cache dashboard request).
 	SystemdServicesUpdated bool                      `json:"systemdUpdated,omitzero" cbor:"5,keyasint,omitempty"`
 	Monitors               map[string]monitor.Result `cbor:"6,keyasint"`
+	Traffic                *traffic.Snapshot         `json:"traffic,omitempty" cbor:"7,keyasint,omitempty"`
 }
