@@ -132,8 +132,8 @@ jobs:
           d=json.loads(p.read_text())
           d['images']={k: 'ghcr.io/codeaix/beszel-plus/'+name+'@'+os.environ[k.upper()+'_DIGEST'] for k,name in [('hub','beszel'),('agent','beszel-agent')]}
           p.write_text(json.dumps(d,indent=2)+'\n')
-          Path('.plus-release/notes.md').write_text('Beszel+ candidate '+os.environ['PLUS_VERSION']+'\n\nTested source: '+os.environ['PLUS_SHA']+'\n\n'+''.join('- '+k+': `'+v+'`\n' for k,v in d['images'].items())+'\nCandidate only; no stable/latest alias or automatic production deployment. UTC vnStat setup and local observation remain required.\n')
           PYCODE
+          python3 scripts/plus/release_notes.py
           (cd .plus-release && sha256sum traffic.patch commits.txt source-manifest.json > SHA256SUMS)
           gh release create "v$PLUS_VERSION" --verify-tag --prerelease --title "Beszel+ $PLUS_VERSION" --notes-file .plus-release/notes.md .plus-release/traffic.patch .plus-release/commits.txt .plus-release/source-manifest.json .plus-release/SHA256SUMS
       - name: Save publication evidence
