@@ -498,7 +498,6 @@ export function SystemsTableColumns(viewMode: "table" | "grid", traffic: Record<
 			id: "traffic",
 			name: () => t`Traffic`,
 			accessorFn: (system) => traffic[system.id]?.settings.enabled === false ? undefined : traffic[system.id]?.percent ?? undefined,
-			size: 150,
 			Icon: ArrowUpDownIcon,
 			header: sortableHeader,
 			sortUndefined: "last",
