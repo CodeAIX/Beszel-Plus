@@ -496,13 +496,17 @@ export function SystemsTableColumns(viewMode: "table" | "grid", traffic: Record<
 		},
 		{
 			id: "traffic",
-			name: () => t`Billing traffic`,
-			accessorFn: (system) => traffic[system.id]?.used_bytes ?? undefined,
+			name: () => t`Traffic`,
+			accessorFn: (system) => traffic[system.id]?.settings.enabled === false ? undefined : traffic[system.id]?.percent ?? undefined,
 			size: 150,
 			Icon: ArrowUpDownIcon,
 			header: sortableHeader,
 			sortUndefined: "last",
-			cell: ({ row }) => <TrafficUsageCell item={traffic[row.original.id]} loading={trafficLoading} error={trafficError} />,
+			cell: ({ row }) => (
+				<Link href={getPagePath($router, "system", { id: row.original.id })} className="relative z-10 block">
+					<TrafficUsageCell compact item={traffic[row.original.id]} loading={trafficLoading} error={trafficError} />
+				</Link>
+			),
 		},
 		{
 			accessorFn: ({ info }) => info.u || undefined,
