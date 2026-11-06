@@ -1,0 +1,14 @@
+{
+  "vnstat_version": "vnStat 2.10 by Teemu Toivola <tst at iki dot fi>",
+  "jsonversion": "2",
+  "non_root": true,
+  "daemon_config_matches_cli": true,
+  "temporary_database_created_with_utc": true,
+  "interfaces": 1,
+  "daily_buckets": 1,
+  "original_json_bytes": 397,
+  "sanitized_sha256": "fea37769279d3bb54b122746d775be91d00978c7cd6239d85b2c42fbc0741608",
+  "command": "vnstat --config <isolated-config> --json d --limit 0",
+  "anonymization": "interface names replaced; aliases cleared; counts and timestamps unchanged",
+  "limits": "single-day CI data; not VPS permissions, 400-day capacity, or historical UTC proof"
+}

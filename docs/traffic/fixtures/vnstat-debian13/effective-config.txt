@@ -1,0 +1,5 @@
+;DailyDays      62
+UpdateInterval 2
+SaveInterval 1
+;TrafficlessEntries 1
+UseUTC 1

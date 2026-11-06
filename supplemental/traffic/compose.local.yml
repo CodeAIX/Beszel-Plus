@@ -1,0 +1,18 @@
+name: beszel-plus-local
+
+services:
+  hub:
+    image: beszel-plus:local
+    pull_policy: never
+    ports:
+      - "127.0.0.1:18090:8090"
+    environment:
+      APP_URL: http://127.0.0.1:18090
+      CHECK_UPDATES: "false"
+    volumes:
+      - plus_local_data:/beszel_data
+    restart: "no"
+    mem_limit: 2g
+
+volumes:
+  plus_local_data:
