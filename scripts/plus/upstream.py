@@ -31,7 +31,9 @@ for key in (7, 8):
         raise SystemExit(f"Upstream allocated CombinedData key {key}; manual protocol migration required")
 actions = run("git", "show", sha + ":internal/common/common-ws.go").split("const (", 1)[1].split("\n)", 1)[0]
 names = re.findall(r'^\s*([A-Z]\w*)\b', actions, re.M)
-if names != ["GetData", "CheckFingerprint", "GetContainerLogs", "GetContainerInfo", "GetSmartData", "GetSystemdInfo", "GetZfsData", "SyncNetworkMonitors", "GetPackageUpdates", "GetSystemdLogs"]:
+if (names != ["GetData", "CheckFingerprint", "GetContainerLogs", "GetContainerInfo", "GetSmartData", "GetSystemdInfo", "GetZfsData", "SyncNetworkMonitors", "GetPackageUpdates", "GetSystemdLogs"]
+    or not re.search(r'^\s*GetData\s+WebSocketAction\s*=\s*iota\s*(?://[^\n]*)?$', actions, re.M)
+    or re.search(r'^\s*(?!GetData\b)[A-Z]\w*[^/\n]*=', actions, re.M)):
     raise SystemExit("Upstream action layout changed; verify reserved GetHistory action 10 before merging")
 run("git", "config", "user.name", "beszel-plus[bot]")
 run("git", "config", "user.email", "beszel-plus[bot]@users.noreply.github.com")
