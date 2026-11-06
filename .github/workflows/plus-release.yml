@@ -47,7 +47,7 @@ jobs:
         run: python3 scripts/plus/export.py
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
-          name: plus-source
+          name: plus-source-${{ github.run_attempt }}
           path: .plus-release/*
           include-hidden-files: true
           retention-days: 90
@@ -140,7 +140,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
-          name: plus-publication
+          name: plus-publication-${{ github.run_attempt }}
           path: .plus-release/*
           include-hidden-files: true
           retention-days: 90

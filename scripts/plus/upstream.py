@@ -32,10 +32,10 @@ run("git", "config", "user.name", "beszel-plus[bot]")
 run("git", "config", "user.email", "beszel-plus[bot]@users.noreply.github.com")
 run("git", "checkout", "-b", branch)
 previous = run("git", "rev-parse", "HEAD")
-subprocess.run(["git", "merge", "--no-ff", "--no-edit", sha], check=True)
+subprocess.run(["git", "merge", "--no-ff", "--no-commit", sha], check=True)
 # Keep fork workflows unchanged: GITHUB_TOKEN cannot write upstream workflow
 # changes, and inherited publishing must never activate in a candidate branch.
-workflow_diff = run("git", "diff", previous, "HEAD", "--", ".github/workflows")
+workflow_diff = run("git", "diff", previous, "--", ".github/workflows")
 Path("supplemental/traffic/upstream-workflows.diff").write_text(workflow_diff + "\n")
 run("git", "restore", "--source=" + previous, "--staged", "--worktree", "--", ".github/workflows")
 current.update(tag=tag, commit=sha)

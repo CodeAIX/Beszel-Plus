@@ -1,0 +1,17 @@
+name: Plus maintenance permission check
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+      - name: Exercise quarantined merge, tag and draft release with GITHUB_TOKEN
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 scripts/plus/check_permissions.py

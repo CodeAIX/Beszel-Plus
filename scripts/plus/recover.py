@@ -13,7 +13,12 @@ image=next(j for j in jobs if j['name']=='images')
 for name in ['Start, back up and restore isolated Hub','Publish Hub','Publish Docker Agent with vnStat CLI']:
  assert any(s['name']==name and s['conclusion']=='success' for s in image['steps']),name
 with tempfile.TemporaryDirectory() as directory:
- gh('run','download',run_id,'-n','plus-publication','-D',directory)
+ names=[a['name'] for a in json.loads(gh('api',f'repos/{repo}/actions/runs/{run_id}/artifacts?per_page=100'))['artifacts'] if not a['expired']]
+ name='plus-publication-'+str(r['run_attempt'])
+ if name not in names:
+  assert r['run_attempt']==1 and 'plus-publication' in names
+  name='plus-publication'
+ gh('run','download',run_id,'-n',name,'-D',directory)
  p=Path(directory)
  for name in ['traffic.patch','commits.txt','source-manifest.json']:
   lines=(p/'SHA256SUMS').read_text().splitlines()
