@@ -141,3 +141,19 @@ func TestTrafficCollectionsRejectDirectClientWrites(t *testing.T) {
 		require.Equal(t, 403, code, name)
 	}
 }
+
+func TestTrafficSettingsBeforeFirstSample(t *testing.T) {
+	app, handler := firstUserTestMux(t)
+	t.Cleanup(app.Cleanup)
+	user, err := beszelTests.CreateUserWithRole(app, "traffic-empty@example.com", "password123", "user")
+	require.NoError(t, err)
+	token, err := user.NewAuthToken()
+	require.NoError(t, err)
+	record, err := beszelTests.CreateRecord(app, "systems", map[string]any{"name": "unconfigured", "host": "127.0.0.1", "port": "45876", "status": "paused", "users": []string{user.Id}})
+	require.NoError(t, err)
+	code, view := trafficAPIRequest(t, handler, "PATCH", "/api/beszel/traffic/settings?system="+record.Id, token, `{"enabled":true,"quota_bytes":0}`)
+	require.Equal(t, 200, code)
+	require.Equal(t, "not_enabled", view["status"])
+	require.Nil(t, view["used_bytes"])
+	require.Empty(t, view["sources"])
+}

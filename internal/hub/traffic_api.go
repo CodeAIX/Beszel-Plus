@@ -96,7 +96,9 @@ func buildTrafficView(ctx context.Context, app core.App, system *core.Record, no
 	settings := settingsFromRecord(id, settingsRecord)
 	v := trafficView{System: id, Iface: settings.Iface, Settings: settings, QuotaBytes: settings.QuotaBytes, CountMode: settings.CountMode, SystemStatus: system.GetString("status"), Status: "not_enabled", Freshness: "unavailable", Quality: "unknown", Sources: []trafficSource{}, Days: []trafficDay{}}
 	if settingsRecord != nil {
-		v.Status = settingsRecord.GetString("collector_status")
+		if status := settingsRecord.GetString("collector_status"); status != "" {
+			v.Status = status
+		}
 		v.ErrorCode = settingsRecord.GetString("collector_error_code")
 	}
 	var sources []*core.Record

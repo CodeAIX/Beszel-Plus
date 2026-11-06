@@ -104,17 +104,21 @@ func TestTrafficPersistenceSourceRecreated(t *testing.T) {
 	sys, app := newTestSystemWithHub(t)
 	snapshot := trafficTestSnapshot()
 	require.NoError(t, SaveTrafficSnapshot(t.Context(), app, sys.Id, snapshot))
+	originalUTCFrom := snapshot.UTCValidFromDay
+	snapshot.UTCValidFromDay = time.Now().UTC().Format(time.DateOnly)
+	snapshot.Interfaces[0].Days = snapshot.Interfaces[0].Days[29:]
 	snapshot.Interfaces[0].SourceCreatedAt++
 	for range 2 {
 		snapshot.ObservedAt++
 		snapshot.Interfaces[0].SourceUpdatedAt++
-		snapshot.Interfaces[0].Days[29].TxBytes = 1000
+		snapshot.Interfaces[0].Days[0].TxBytes = 1000
 		require.NoError(t, SaveTrafficSnapshot(t.Context(), app, sys.Id, snapshot))
 	}
 	require.Equal(t, int64(200), trafficRecords(t, app, "traffic_daily", sys.Id)[29].GetInt64("tx_bytes"))
 	source, err := app.FindFirstRecordByFilter("traffic_sources", "system={:system}", dbx.Params{"system": sys.Id})
 	require.NoError(t, err)
 	require.Equal(t, "source_recreated", source.GetString("error_code"))
+	require.Equal(t, originalUTCFrom, source.GetString("utc_valid_from_day"), "a recreated DB must not hide retained history by changing its boundary")
 	require.Equal(t, "suspected_reset", source.GetString("quality"))
 }
 

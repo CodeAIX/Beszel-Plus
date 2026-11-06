@@ -13,6 +13,10 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
+#: src/components/routes/system/traffic-panel.tsx
+msgid "(end exclusive, UTC)"
+msgstr "(end exclusive, UTC)"
+
 #. placeholder {0}: newVersion.v
 #: src/components/footer-repo-link.tsx
 msgctxt "New version available"
@@ -91,6 +95,10 @@ msgstr "{totalCount, plural, one {# service} other {# services}}"
 #: src/components/alerts-history-columns.tsx
 msgid "{value, plural, one {# day} other {# days}}"
 msgstr "{value, plural, one {# day} other {# days}}"
+
+#: src/components/traffic/traffic-settings-dialog.tsx
+msgid "0 means no quota. 1 TB = 1,000 GB."
+msgstr "0 means no quota. 1 TB = 1,000 GB."
 
 #: src/lib/utils.ts
 msgid "1 hour"
@@ -246,13 +254,13 @@ msgstr "Are you sure?"
 msgid "Automatic copy requires a secure context."
 msgstr "Automatic copy requires a secure context."
 
-#: src/components/routes/system/storage-pools-table.tsx
-msgctxt "Disk space available"
+#. Package version available to install
+#: src/components/routes/system/package-updates-table.tsx
 msgid "Available"
 msgstr "Available"
 
-#. Package version available to install
-#: src/components/routes/system/package-updates-table.tsx
+#: src/components/routes/system/storage-pools-table.tsx
+msgctxt "Disk space available"
 msgid "Available"
 msgstr "Available"
 
@@ -359,6 +367,22 @@ msgstr "Beszel supports OpenID Connect and many OAuth2 authentication providers.
 msgid "Beszel uses <0>Shoutrrr</0> to integrate with popular notification services."
 msgstr "Beszel uses <0>Shoutrrr</0> to integrate with popular notification services."
 
+#: src/components/traffic/traffic-settings-dialog.tsx
+msgid "Billing day (UTC)"
+msgstr "Billing day (UTC)"
+
+#: src/components/traffic/traffic-settings-dialog.tsx
+msgid "Billing interface"
+msgstr "Billing interface"
+
+#: src/components/routes/system/traffic-panel.tsx
+msgid "Billing period"
+msgstr "Billing period"
+
+#: src/components/systems-table/systems-table-columns.tsx
+msgid "Billing traffic"
+msgstr "Billing traffic"
+
 #: src/components/add-system.tsx
 msgid "Binary"
 msgstr "Binary"
@@ -389,6 +413,10 @@ msgstr "Bytes (KB/s, MB/s, GB/s)"
 #: src/components/routes/system/charts/memory-charts.tsx
 msgid "Cache / Buffers"
 msgstr "Cache / Buffers"
+
+#: src/components/routes/system/traffic-panel.tsx
+msgid "Calendar month"
+msgstr "Calendar month"
 
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Can reload"
@@ -456,6 +484,10 @@ msgstr "Change display units for metrics."
 msgid "Change general application options."
 msgstr "Change general application options."
 
+#: src/components/traffic/traffic-settings-dialog.tsx
+msgid "Changing interfaces can make this billing period discontinuous. Interfaces are never added together."
+msgstr "Changing interfaces can make this billing period discontinuous. Interfaces are never added together."
+
 #: src/components/routes/system/charts/sensor-charts.tsx
 msgid "Charge"
 msgstr "Charge"
@@ -498,6 +530,15 @@ msgstr "Checked {0}"
 msgid "Checksum errors"
 msgstr "Checksum errors"
 
+#: src/components/traffic/traffic-settings-dialog.tsx
+#: src/components/traffic/traffic-usage-cell.tsx
+msgid "Choose an interface"
+msgstr "Choose an interface"
+
+#: src/components/traffic/traffic-settings-dialog.tsx
+msgid "Choose one billing interface. All daily boundaries use UTC."
+msgstr "Choose one billing interface. All daily boundaries use UTC."
+
 #: src/components/containers-table/containers-table.tsx
 #: src/components/network-monitors-table/network-monitors-table.tsx
 #: src/components/routes/system/package-updates-table.tsx
@@ -535,6 +576,14 @@ msgstr "Click on a system to view more information."
 #: src/components/ui/input-copy.tsx
 msgid "Click to copy"
 msgstr "Click to copy"
+
+#: src/components/traffic/traffic-usage-cell.tsx
+msgid "Collected"
+msgstr "Collected"
+
+#: src/components/traffic/traffic-usage-cell.tsx
+msgid "Collection needs attention"
+msgstr "Collection needs attention"
 
 #: src/components/login/forgot-pass-form.tsx
 #: src/components/login/forgot-pass-form.tsx
@@ -661,6 +710,14 @@ msgctxt "Core system metrics"
 msgid "Core"
 msgstr "Core"
 
+#: src/components/traffic/traffic-settings-dialog.tsx
+msgid "Count mode"
+msgstr "Count mode"
+
+#: src/components/traffic/traffic-usage-cell.tsx
+msgid "Coverage unverified"
+msgstr "Coverage unverified"
+
 #: src/components/containers-table/containers-table-columns.tsx
 #: src/components/systemd-table/systemd-table-columns.tsx
 #: src/components/systems-table/systems-table-columns.tsx
@@ -761,6 +818,18 @@ msgstr "Cycles"
 msgid "Daily"
 msgstr "Daily"
 
+#: src/components/routes/system/traffic-panel.tsx
+msgid "Daily traffic (UTC)"
+msgstr "Daily traffic (UTC)"
+
+#: src/components/routes/system/traffic-panel.tsx
+msgid "Daily vnStat accounting · UTC"
+msgstr "Daily vnStat accounting · UTC"
+
+#: src/components/routes/system/traffic-panel.tsx
+msgid "days"
+msgstr "days"
+
 #: src/components/routes/system/info-bar.tsx
 msgctxt "Default system layout option"
 msgid "Default"
@@ -794,6 +863,10 @@ msgstr "Detail"
 msgid "Device"
 msgstr "Device"
 
+#: src/components/traffic/traffic-usage-cell.tsx
+msgid "Disabled"
+msgstr "Disabled"
+
 #. Context: Battery state
 #: src/lib/i18n.ts
 msgid "Discharging"
@@ -826,6 +899,10 @@ msgstr "Dismiss"
 msgctxt "Layout display options"
 msgid "Display"
 msgstr "Display"
+
+#: src/components/traffic/traffic-settings-dialog.tsx
+msgid "Display units"
+msgstr "Display units"
 
 #: src/components/network-monitors-table/monitor-dialog.tsx
 msgid "DNS Server"
@@ -1226,6 +1303,18 @@ msgstr "Image update available"
 msgid "Inactive"
 msgstr "Inactive"
 
+#: src/components/traffic/traffic-usage-cell.tsx
+msgid "Incomplete period"
+msgstr "Incomplete period"
+
+#: src/components/traffic/traffic-usage-cell.tsx
+msgid "Initializing"
+msgstr "Initializing"
+
+#: src/components/routes/system/traffic-panel.tsx
+msgid "Interface counters may differ from the provider's bill."
+msgstr "Interface counters may differ from the provider's bill."
+
 #: src/components/network-monitors-table/network-monitors-columns.tsx
 #: src/components/network-monitors-table/network-monitors-columns.tsx
 #: src/components/routes/settings/heartbeat.tsx
@@ -1243,6 +1332,10 @@ msgstr "Invalid email address."
 #: src/components/routes/settings/general.tsx
 msgid "Language"
 msgstr "Language"
+
+#: src/components/routes/system/traffic-panel.tsx
+msgid "Last sync"
+msgstr "Last sync"
 
 #: src/components/systems-table/systems-table.tsx
 msgid "Layout"
@@ -1286,10 +1379,18 @@ msgstr "Load Avg"
 msgid "Load state"
 msgstr "Load state"
 
+#: src/components/routes/system/traffic-panel.tsx
+msgid "Loading traffic"
+msgstr "Loading traffic"
+
 #: src/components/systemd-table/systemd-table.tsx
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Loading..."
 msgstr "Loading..."
+
+#: src/components/traffic/traffic-usage-cell.tsx
+msgid "Loading…"
+msgstr "Loading…"
 
 #: src/components/navbar.tsx
 #: src/components/navbar.tsx
@@ -1390,6 +1491,10 @@ msgstr "Min 1h"
 msgid "Minor"
 msgstr "Minor"
 
+#: src/components/routes/system/traffic-panel.tsx
+msgid "Missing days are gaps, not zero usage. Historical coverage has not been fully verified."
+msgstr "Missing days are gaps, not zero usage. Historical coverage has not been fully verified."
+
 #. Device model
 #: src/components/routes/system/smart-table.tsx
 msgid "Model"
@@ -1467,13 +1572,29 @@ msgstr "Network unit"
 msgid "No"
 msgstr "No"
 
+#: src/components/routes/system/traffic-panel.tsx
+msgid "No daily traffic collected yet."
+msgstr "No daily traffic collected yet."
+
 #: src/components/routes/system/storage-pools-table.tsx
 msgid "No detail data for this pool."
 msgstr "No detail data for this pool."
 
+#: src/components/routes/system/traffic-panel.tsx
+msgid "No interface selected"
+msgstr "No interface selected"
+
 #: src/components/systemd-table/systemd-table.tsx
 msgid "No logs found."
 msgstr "No logs found."
+
+#: src/components/traffic/traffic-usage-cell.tsx
+msgid "No monitored interfaces"
+msgstr "No monitored interfaces"
+
+#: src/components/routes/system/traffic-panel.tsx
+msgid "No quota"
+msgstr "No quota"
 
 #: src/components/command-palette.tsx
 #: src/components/systemd-table/systemd-table.tsx
@@ -1522,6 +1643,10 @@ msgstr "Notifications may include recent container log excerpts."
 #: src/components/login/auth-form.tsx
 msgid "OAuth 2 / OIDC support"
 msgstr "OAuth 2 / OIDC support"
+
+#: src/components/traffic/traffic-usage-cell.tsx
+msgid "Offline · last known"
+msgstr "Offline · last known"
 
 #: src/components/routes/settings/config-yaml.tsx
 msgid "On each restart, systems in the database will be updated to match the systems defined in the file."
@@ -1577,6 +1702,12 @@ msgstr "Or continue with"
 #: src/components/routes/system/package-updates-table.tsx
 msgid "Other"
 msgstr "Other"
+
+#: src/components/routes/system/traffic-panel.tsx
+#: src/components/traffic/traffic-settings-dialog.tsx
+#: src/components/traffic/traffic-usage-cell.tsx
+msgid "Outbound only"
+msgstr "Outbound only"
 
 #: src/components/alerts/alerts-sheet.tsx
 msgid "Overwrite existing alerts"
@@ -1646,6 +1777,10 @@ msgstr "Pause"
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Paused"
 msgstr "Paused"
+
+#: src/components/traffic/traffic-usage-cell.tsx
+msgid "Paused · last known"
+msgstr "Paused · last known"
 
 #: src/components/systems-table/systems-table.tsx
 msgid "Paused ({pausedSystemsLength})"
@@ -1774,6 +1909,14 @@ msgstr "Queue Depth"
 msgid "Quiet Hours"
 msgstr "Quiet Hours"
 
+#: src/components/traffic/traffic-settings-dialog.tsx
+msgid "Quota"
+msgstr "Quota"
+
+#: src/components/routes/system/traffic-panel.tsx
+msgid "Quota usage"
+msgstr "Quota usage"
+
 #: src/components/routes/system/raw-capacity-label.tsx
 #: src/components/routes/system/storage-pools-table.tsx
 #: src/components/routes/system/storage-pools-table.tsx
@@ -1801,8 +1944,15 @@ msgid "Read errors"
 msgstr "Read errors"
 
 #: src/components/routes/system/charts/network-charts.tsx
+#: src/components/routes/system/traffic-panel.tsx
 msgid "Received"
 msgstr "Received"
+
+#: src/components/routes/system/traffic-panel.tsx
+#: src/components/traffic/traffic-settings-dialog.tsx
+#: src/components/traffic/traffic-usage-cell.tsx
+msgid "Received + sent"
+msgstr "Received + sent"
 
 #: src/components/containers-table/containers-table.tsx
 #: src/components/logs-display.tsx
@@ -1812,6 +1962,10 @@ msgstr "Received"
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Refresh"
 msgstr "Refresh"
+
+#: src/components/routes/system/traffic-panel.tsx
+msgid "Refresh traffic"
+msgstr "Refresh traffic"
 
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Relationships"
@@ -1863,6 +2017,10 @@ msgstr "Restarts"
 msgid "Resume"
 msgstr "Resume"
 
+#: src/components/routes/system/traffic-panel.tsx
+msgid "Retry"
+msgstr "Retry"
+
 #: src/components/token-value.tsx
 #: src/components/token-value.tsx
 msgid "Reveal token"
@@ -1908,6 +2066,10 @@ msgstr "Save {foo}"
 msgid "Save address using enter key or comma. Leave blank to disable email notifications."
 msgstr "Save address using enter key or comma. Leave blank to disable email notifications."
 
+#: src/components/traffic/traffic-settings-dialog.tsx
+msgid "Save settings"
+msgstr "Save settings"
+
 #: src/components/routes/settings/general.tsx
 #: src/components/routes/settings/notifications.tsx
 msgid "Save Settings"
@@ -1920,6 +2082,10 @@ msgstr "Save System"
 #: src/components/routes/settings/tokens-fingerprints.tsx
 msgid "Saved in the database and does not expire until you disable it."
 msgstr "Saved in the database and does not expire until you disable it."
+
+#: src/components/traffic/traffic-settings-dialog.tsx
+msgid "Saving…"
+msgstr "Saving…"
 
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Schedule"
@@ -2009,6 +2175,7 @@ msgid "Send test heartbeat"
 msgstr "Send test heartbeat"
 
 #: src/components/routes/system/charts/network-charts.tsx
+#: src/components/routes/system/traffic-panel.tsx
 msgid "Sent"
 msgstr "Sent"
 
@@ -2033,6 +2200,10 @@ msgstr "Set percentage thresholds for meter colors."
 msgid "Set the following environment variables on your Beszel hub to enable heartbeat monitoring:"
 msgstr "Set the following environment variables on your Beszel hub to enable heartbeat monitoring:"
 
+#: src/components/routes/system/traffic-panel.tsx
+msgid "Set up Docker traffic collection"
+msgstr "Set up Docker traffic collection"
+
 #: src/components/command-palette.tsx
 #: src/components/command-palette.tsx
 #: src/components/navbar.tsx
@@ -2051,6 +2222,10 @@ msgstr "Settings saved"
 msgid "Show timestamps"
 msgstr "Show timestamps"
 
+#: src/components/traffic/traffic-settings-dialog.tsx
+msgid "Show traffic usage"
+msgstr "Show traffic usage"
+
 #: src/components/login/auth-form.tsx
 msgid "Sign in"
 msgstr "Sign in"
@@ -2067,6 +2242,10 @@ msgstr "SMTP settings"
 #: src/components/systems-table/systems-table.tsx
 msgid "Sort By"
 msgstr "Sort By"
+
+#: src/components/traffic/traffic-usage-cell.tsx
+msgid "Stale"
+msgstr "Stale"
 
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/quiet-hours.tsx
@@ -2092,6 +2271,10 @@ msgstr "Status"
 #: src/components/systemd-table/systemd-table-columns.tsx
 msgid "Sub State"
 msgstr "Sub State"
+
+#: src/components/traffic/traffic-usage-cell.tsx
+msgid "Suspected counter reset"
+msgstr "Suspected counter reset"
 
 #: src/components/routes/system/charts/memory-charts.tsx
 msgid "Swap space used by the system"
@@ -2207,9 +2390,17 @@ msgstr "The overall status is <0>ok</0> when all systems are up, <1>warn</1> whe
 msgid "Then log into the backend and reset your user account password in the users table."
 msgstr "Then log into the backend and reset your user account password in the users table."
 
+#: src/components/traffic/traffic-settings-dialog.tsx
+msgid "This account can view settings but cannot change them."
+msgstr "This account can view settings but cannot change them."
+
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "This action cannot be undone. This will permanently delete all current records for {name} from the database."
 msgstr "This action cannot be undone. This will permanently delete all current records for {name} from the database."
+
+#: src/components/traffic/traffic-settings-dialog.tsx
+msgid "This virtual interface may count traffic already recorded by the public interface."
+msgstr "This virtual interface may count traffic already recorded by the public interface."
 
 #: src/components/network-monitors-table/network-monitors-table.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
@@ -2231,6 +2422,10 @@ msgstr "Time format"
 #: src/components/routes/settings/notifications.tsx
 msgid "To email(s)"
 msgstr "To email(s)"
+
+#: src/components/routes/system/traffic-panel.tsx
+msgid "Today"
+msgstr "Today"
 
 #: src/components/add-system.tsx
 #: src/components/routes/settings/tokens-fingerprints.tsx
@@ -2284,6 +2479,30 @@ msgstr "Total time spent on read/write (can exceed 100%)"
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Total: {0}"
 msgstr "Total: {0}"
+
+#: src/components/routes/system.tsx
+#: src/components/routes/system/traffic-panel.tsx
+#: src/components/routes/system/traffic-panel.tsx
+msgid "Traffic"
+msgstr "Traffic"
+
+#: src/components/traffic/traffic-usage-cell.tsx
+msgid "Traffic not enabled"
+msgstr "Traffic not enabled"
+
+#: src/components/traffic/traffic-usage-cell.tsx
+msgid "Traffic quota usage"
+msgstr "Traffic quota usage"
+
+#: src/components/traffic/traffic-settings-dialog.tsx
+#: src/components/traffic/traffic-settings-dialog.tsx
+msgid "Traffic settings"
+msgstr "Traffic settings"
+
+#: src/components/routes/system/traffic-panel.tsx
+#: src/components/traffic/traffic-usage-cell.tsx
+msgid "Traffic unavailable"
+msgstr "Traffic unavailable"
 
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Triggered by"
@@ -2368,9 +2587,21 @@ msgstr "Triggers when usage of any disk exceeds a threshold"
 msgid "Type"
 msgstr "Type"
 
+#: src/components/routes/system/traffic-panel.tsx
+msgid "Unable to refresh. Showing last known data."
+msgstr "Unable to refresh. Showing last known data."
+
+#: src/components/traffic/traffic-settings-dialog.tsx
+msgid "Unable to save. Check the quota, interface and permissions."
+msgstr "Unable to save. Check the quota, interface and permissions."
+
 #: src/lib/alerts.ts
 msgid "Unhealthy"
 msgstr "Unhealthy"
+
+#: src/components/traffic/traffic-settings-dialog.tsx
+msgid "Unit"
+msgstr "Unit"
 
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Unit file"
@@ -2399,6 +2630,10 @@ msgstr "Unknown"
 msgid "Unlimited"
 msgstr "Unlimited"
 
+#: src/components/traffic/traffic-usage-cell.tsx
+msgid "Unsupported platform"
+msgstr "Unsupported platform"
+
 #. Context: System is up
 #: src/components/routes/system/info-bar.tsx
 #: src/components/systems-table/systems-table-columns.tsx
@@ -2417,6 +2652,10 @@ msgstr "Up to date"
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Update"
 msgstr "Update"
+
+#: src/components/traffic/traffic-usage-cell.tsx
+msgid "Update failed"
+msgstr "Update failed"
 
 #: src/components/containers-table/containers-table-columns.tsx
 #: src/components/network-monitors-table/network-monitors-columns.tsx
@@ -2485,6 +2724,14 @@ msgstr "Utilization"
 msgid "Value"
 msgstr "Value"
 
+#: src/components/routes/system/traffic-panel.tsx
+msgid "Values are as of the last sync; today is still in progress."
+msgstr "Values are as of the last sync; today is still in progress."
+
+#: src/components/traffic/traffic-usage-cell.tsx
+msgid "Verify UTC configuration"
+msgstr "Verify UTC configuration"
+
 #: src/components/network-monitors-table/network-monitors-table.tsx
 #: src/components/routes/system/info-bar.tsx
 #: src/components/systems-table/systems-table.tsx
@@ -2513,6 +2760,22 @@ msgstr "View your 200 most recent alerts."
 #: src/components/systems-table/systems-table.tsx
 msgid "Visible Fields"
 msgstr "Visible Fields"
+
+#: src/components/traffic/traffic-usage-cell.tsx
+msgid "vnStat database unavailable"
+msgstr "vnStat database unavailable"
+
+#: src/components/traffic/traffic-usage-cell.tsx
+msgid "vnStat not installed"
+msgstr "vnStat not installed"
+
+#: src/components/traffic/traffic-usage-cell.tsx
+msgid "vnStat permission denied"
+msgstr "vnStat permission denied"
+
+#: src/components/traffic/traffic-usage-cell.tsx
+msgid "vnStat query timed out"
+msgstr "vnStat query timed out"
 
 #: src/components/charts/chart-no-values.tsx
 #: src/components/routes/system/chart-card.tsx

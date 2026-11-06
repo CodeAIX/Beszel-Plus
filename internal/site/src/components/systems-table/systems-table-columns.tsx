@@ -38,6 +38,8 @@ import {
 	secondsToUptimeString,
 } from "@/lib/utils"
 import { batteryStateTranslations } from "@/lib/i18n"
+import { TrafficUsageCell } from "../traffic/traffic-usage-cell"
+import type { TrafficView } from "@/types"
 import { connectedWiFi, strongestWiFi, strongestWiFiSignal, wifiSignalState } from "@/lib/wifi"
 import type { SystemRecord, WiFi } from "@/types"
 import { SystemDialog } from "../add-system"
@@ -99,8 +101,9 @@ function getMeterStateByThresholds(value: number, warn = 65, crit = 90): MeterSt
  * @param viewMode - "table" or "grid"
  * @returns - Column definitions for the systems table
  */
-export function SystemsTableColumns(viewMode: "table" | "grid"): ColumnDef<SystemRecord>[] {
+export function SystemsTableColumns(viewMode: "table" | "grid", traffic: Record<string, TrafficView> = {}, trafficLoading = false, trafficError = false): ColumnDef<SystemRecord>[] {
 	return [
+
 		{
 			// size: 200,
 			size: 100,
@@ -490,6 +493,16 @@ export function SystemsTableColumns(viewMode: "table" | "grid"): ColumnDef<Syste
 					</span>
 				)
 			},
+		},
+		{
+			id: "traffic",
+			name: () => t`Billing traffic`,
+			accessorFn: (system) => traffic[system.id]?.used_bytes ?? undefined,
+			size: 150,
+			Icon: ArrowUpDownIcon,
+			header: sortableHeader,
+			sortUndefined: "last",
+			cell: ({ row }) => <TrafficUsageCell item={traffic[row.original.id]} loading={trafficLoading} error={trafficError} />,
 		},
 		{
 			accessorFn: ({ info }) => info.u || undefined,

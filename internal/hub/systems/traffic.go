@@ -183,7 +183,6 @@ func saveTrafficInterface(ctx context.Context, app core.App, id string, snapshot
 	previousUpdated := source.GetInt64("source_updated_at")
 	source.Set("refresh_seconds", snapshot.RefreshSeconds)
 	source.Set("save_interval_seconds", snapshot.SaveIntervalSeconds)
-	source.Set("utc_valid_from_day", snapshot.UTCValidFromDay)
 	source.Set("status", traffic.OK)
 	if source.GetString("quality") != "suspected_reset" {
 		source.Set("error_code", "")
@@ -200,6 +199,7 @@ func saveTrafficInterface(ctx context.Context, app core.App, id string, snapshot
 		source.Set("error_code", "source_time_reversed")
 		return app.SaveWithContext(ctx, source)
 	}
+	source.Set("utc_valid_from_day", snapshot.UTCValidFromDay)
 	source.Set("source_updated_at", iface.SourceUpdatedAt)
 	var records []*core.Record
 	if len(iface.Days) > 0 {

@@ -5,7 +5,7 @@
 ## 隔离边界
 
 - 本机Docker的独立项目、独立新数据卷、仅绑定127.0.0.1测试端口；不加载fnOS数据/凭据，不自动连接真实VPS。
-- 当前本机docker context为colima，daemon socket不存在，且`docker compose`插件/`docker-compose`命令均缺失。S0格式验证已在GitHub临时Linux容器完成；到本地运行阶段再安装/配置Compose、检查/启动现有colima，不能把“命令存在”当成Docker可用。
+- 已安装Compose插件，运行独立Colima profile `beszel-plus`，context `colima-beszel-plus`。默认Docker context和原Colima profile未切换。所有命令显式指定context。
 - macOS主机不承担Linux collector。Linux Agent/vnstatd在Docker Linux VM/专门测试容器中运行；宿主macOS Agent的非Linuxstub需单独编译验证。
 - 本地Hub用于模拟系统、角色、数据缺失、账单周期、图表、响应/权限和WS/SSH；真实格式fixture来自已运行的三发行版CI。collector执行和计数连续性需在Linux环境实际运行，不用mock宣称完成。
 
@@ -16,19 +16,20 @@
 3. S4：本地Hub + 受控Linux测试Agent；桌面/窄屏、只读/非成员/share-all、loading/error/null柱；同一日期对照CLI。
 4. S5：本地构建Hub镜像与Linux Agent；2GB内存限制、长时资源/重启/补传/混合版本；镜像可拉取和本地成套恢复。本地结果记录为本地，不声称生产VPS/fnOS已验收。
 
-## Hub运行入口（后续具备构建产物时）
+## Hub运行入口
 
-本次S0没有构建Plus功能镜像。以下由执行者在源码根目录、确认Docker可用后按阶段使用；当前即使编译原版也不代表有Traffic功能。
+S4已构建本地功能镜像并完成隔离验证，详情见S4_REPORT。以下从源码构建新的独立测试实例。
 
 ```sh
 # 先生成Go嵌入的真实前端；不要修改lockfile后假装frozen构建。
 cd internal/site
-bun install --frozen-lockfile
-bun run build
+npm ci --ignore-scripts
+npm run build
+sh tests/run.sh
 cd ../..
-docker build -f internal/dockerfile_hub -t beszel-plus:local .
-docker compose -f supplemental/traffic/compose.local.yml up -d
-docker compose -f supplemental/traffic/compose.local.yml ps
+docker --context colima-beszel-plus build -f internal/dockerfile_hub -t beszel-plus:local .
+docker --context colima-beszel-plus compose -f supplemental/traffic/compose.local.yml up -d
+docker --context colima-beszel-plus compose -f supplemental/traffic/compose.local.yml ps
 ```
 
 打开 http://127.0.0.1:18090 并创建本地测试账号。首次需确认端口空闲；任何测试账号/Agent token只放本地私有配置，不提交GitHub。停止测试使用相同compose文件的`down`，不默认加`-v`删除测试历史。

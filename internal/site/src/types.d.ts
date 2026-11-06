@@ -741,3 +741,71 @@ export interface NetworkMonitorStatsRecord {
 	stats: Record<string, MonitorStats>
 	created: number // unix timestamp (ms) for Recharts xAxis
 }
+export interface TrafficSettings {
+	system: string
+	enabled: boolean
+	iface: string
+	quota_bytes: number
+	count_mode: "tx" | "rx_tx"
+	billing_day: number
+	billing_timezone: "UTC"
+	display_unit: "GB" | "GiB"
+}
+
+export interface TrafficSummary {
+	period_start: string
+	period_end_exclusive: string
+	rx_bytes: number | null
+	tx_bytes: number | null
+	total_bytes: number | null
+	used_bytes: number | null
+	percent: number | null
+	coverage: "complete" | "partial" | "unknown" | "unavailable"
+	missing_days: string[]
+	ongoing: boolean
+}
+
+export interface TrafficDay {
+	day: string
+	rx_bytes: number | null
+	tx_bytes: number | null
+	quality: string
+}
+
+export interface TrafficSource {
+	iface: string
+	source_created_at: number
+	source_updated_at: number
+	last_success_at: number
+	refresh_seconds: number
+	save_interval_seconds: number
+	utc_valid_from_day: string
+	quality: string
+	error_code: string
+}
+
+export interface TrafficView extends TrafficSummary {
+	system: string
+	iface: string
+	status: string
+	freshness: string
+	quality: string
+	error_code: string
+	system_status: string
+	settings: TrafficSettings
+	sources: TrafficSource[]
+	source: TrafficSource | null
+	today: TrafficSummary
+	calendar_month: TrafficSummary
+	billing_cycle: TrafficSummary
+	days: TrafficDay[] | null
+	last_success_at: string | null
+	quota_bytes: number
+	count_mode: "tx" | "rx_tx"
+}
+
+export interface TrafficOverview {
+	generated_at: string
+	items: TrafficView[]
+	has_more: boolean
+}

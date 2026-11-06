@@ -54,6 +54,7 @@ import AlertButton from "../alerts/alert-button"
 import { $router, Link } from "../router"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
 import { SystemsTableColumns, ActionsButton, IndicatorDot } from "./systems-table-columns"
+import { useTrafficOverview } from "../traffic/use-traffic"
 
 type ViewMode = "table" | "grid"
 type StatusFilter = "all" | SystemRecord["status"]
@@ -61,6 +62,8 @@ type StatusFilter = "all" | SystemRecord["status"]
 const preloadSystemDetail = runOnce(() => import("@/components/routes/system.tsx"))
 
 export default function SystemsTable() {
+	const traffic = useTrafficOverview()
+	const trafficById = useMemo(() => Object.fromEntries(traffic.data?.items.map((item) => [item.system, item]) ?? []), [traffic.data])
 	const data = useStore($systems)
 	const systemsLoaded = useStore($systemsLoaded)
 	const downSystems = $downSystems.get()
@@ -186,10 +189,13 @@ export default function SystemsTable() {
 		}
 	}, [filter])
 
-	const columnDefs = useMemo(() => SystemsTableColumns(viewMode), [viewMode])
+	const columnDefs = useMemo(() => SystemsTableColumns(viewMode, trafficById, traffic.loading, traffic.error), [viewMode, trafficById, traffic.loading, traffic.error])
+	// TanStack and the memoized rows cache accessor/cell values by data identity.
+	// Refresh that identity when the page-level traffic response changes.
+	const tableData = useMemo(() => filteredData.map((system) => ({ ...system })), [filteredData, trafficById, traffic.loading, traffic.error])
 
 	const table = useReactTable({
-		data: filteredData,
+		data: tableData,
 		columns: columnDefs,
 		getCoreRowModel: getCoreRowModel(),
 		onSortingChange: handleSortingChange,
@@ -394,7 +400,7 @@ export default function SystemsTable() {
 			{CardHead}
 			{viewMode === "table" ? (
 				// table layout
-				<div className="rounded-md">
+				<div className="rounded-md overflow-x-auto">
 					<AllSystemsTable table={table} rows={rows} colLength={visibleColumns.length} isLoading={!systemsLoaded} />
 				</div>
 			) : (

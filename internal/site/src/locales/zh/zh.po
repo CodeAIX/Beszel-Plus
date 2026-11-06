@@ -18,6 +18,10 @@ msgstr ""
 "X-Crowdin-File: /main/internal/site/src/locales/en/en.po\n"
 "X-Crowdin-File-ID: 32\n"
 
+#: src/components/routes/system/traffic-panel.tsx
+msgid "(end exclusive, UTC)"
+msgstr "（不含结束日，UTC）"
+
 #. placeholder {0}: newVersion.v
 #: src/components/footer-repo-link.tsx
 msgctxt "New version available"
@@ -96,6 +100,10 @@ msgstr "{totalCount, plural, one {# 個服務} other {# 個服務}}"
 #: src/components/alerts-history-columns.tsx
 msgid "{value, plural, one {# day} other {# days}}"
 msgstr "{value, plural, one {# 天} other {# 天}}"
+
+#: src/components/traffic/traffic-settings-dialog.tsx
+msgid "0 means no quota. 1 TB = 1,000 GB."
+msgstr "0 表示不设配额，1 TB = 1,000 GB。"
 
 #: src/lib/utils.ts
 msgid "1 hour"
@@ -251,13 +259,13 @@ msgstr "您確定嗎？"
 msgid "Automatic copy requires a secure context."
 msgstr "只有在受保護的環境（HTTPS）才能自動複製。"
 
-#: src/components/routes/system/storage-pools-table.tsx
-msgctxt "Disk space available"
+#. Package version available to install
+#: src/components/routes/system/package-updates-table.tsx
 msgid "Available"
 msgstr "可用"
 
-#. Package version available to install
-#: src/components/routes/system/package-updates-table.tsx
+#: src/components/routes/system/storage-pools-table.tsx
+msgctxt "Disk space available"
 msgid "Available"
 msgstr "可用"
 
@@ -364,6 +372,22 @@ msgstr "Beszel 支援 OpenID Connect 和許多 OAuth2 認證提供者。"
 msgid "Beszel uses <0>Shoutrrr</0> to integrate with popular notification services."
 msgstr "Beszel 以 <0>Shoutrrr</0> 整合常用的通知服務。"
 
+#: src/components/traffic/traffic-settings-dialog.tsx
+msgid "Billing day (UTC)"
+msgstr "账单起始日（UTC）"
+
+#: src/components/traffic/traffic-settings-dialog.tsx
+msgid "Billing interface"
+msgstr "计费网卡"
+
+#: src/components/routes/system/traffic-panel.tsx
+msgid "Billing period"
+msgstr "账单周期"
+
+#: src/components/systems-table/systems-table-columns.tsx
+msgid "Billing traffic"
+msgstr "本期流量"
+
 #: src/components/add-system.tsx
 msgid "Binary"
 msgstr "執行檔"
@@ -394,6 +418,10 @@ msgstr "位元組 (KB/s, MB/s, GB/s)"
 #: src/components/routes/system/charts/memory-charts.tsx
 msgid "Cache / Buffers"
 msgstr "快取/緩衝"
+
+#: src/components/routes/system/traffic-panel.tsx
+msgid "Calendar month"
+msgstr "自然月"
 
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Can reload"
@@ -461,6 +489,10 @@ msgstr "更改指標的顯示單位。"
 msgid "Change general application options."
 msgstr "修改一般應用程式選項。"
 
+#: src/components/traffic/traffic-settings-dialog.tsx
+msgid "Changing interfaces can make this billing period discontinuous. Interfaces are never added together."
+msgstr "更换网卡可能导致当前账单周期不连续，系统不会将多个网卡相加。"
+
 #: src/components/routes/system/charts/sensor-charts.tsx
 msgid "Charge"
 msgstr "充電"
@@ -503,6 +535,15 @@ msgstr "已於 {0} 檢查"
 msgid "Checksum errors"
 msgstr "校驗和錯誤"
 
+#: src/components/traffic/traffic-settings-dialog.tsx
+#: src/components/traffic/traffic-usage-cell.tsx
+msgid "Choose an interface"
+msgstr "选择计费网卡"
+
+#: src/components/traffic/traffic-settings-dialog.tsx
+msgid "Choose one billing interface. All daily boundaries use UTC."
+msgstr "选择一个计费网卡，所有日界线均采用 UTC。"
+
 #: src/components/containers-table/containers-table.tsx
 #: src/components/network-monitors-table/network-monitors-table.tsx
 #: src/components/routes/system/package-updates-table.tsx
@@ -540,6 +581,14 @@ msgstr "點擊系統以查看更多資訊。"
 #: src/components/ui/input-copy.tsx
 msgid "Click to copy"
 msgstr "點擊複製"
+
+#: src/components/traffic/traffic-usage-cell.tsx
+msgid "Collected"
+msgstr "已采集"
+
+#: src/components/traffic/traffic-usage-cell.tsx
+msgid "Collection needs attention"
+msgstr "流量采集需要检查"
 
 #: src/components/login/forgot-pass-form.tsx
 #: src/components/login/forgot-pass-form.tsx
@@ -666,6 +715,14 @@ msgctxt "Core system metrics"
 msgid "Core"
 msgstr "核心指標"
 
+#: src/components/traffic/traffic-settings-dialog.tsx
+msgid "Count mode"
+msgstr "计费方向"
+
+#: src/components/traffic/traffic-usage-cell.tsx
+msgid "Coverage unverified"
+msgstr "覆盖范围未核实"
+
 #: src/components/containers-table/containers-table-columns.tsx
 #: src/components/systemd-table/systemd-table-columns.tsx
 #: src/components/systems-table/systems-table-columns.tsx
@@ -766,6 +823,18 @@ msgstr "循環"
 msgid "Daily"
 msgstr "每日"
 
+#: src/components/routes/system/traffic-panel.tsx
+msgid "Daily traffic (UTC)"
+msgstr "每日流量（UTC）"
+
+#: src/components/routes/system/traffic-panel.tsx
+msgid "Daily vnStat accounting · UTC"
+msgstr "vnStat 按日统计 · UTC"
+
+#: src/components/routes/system/traffic-panel.tsx
+msgid "days"
+msgstr "天"
+
 #: src/components/routes/system/info-bar.tsx
 msgctxt "Default system layout option"
 msgid "Default"
@@ -799,6 +868,10 @@ msgstr "詳細資訊"
 msgid "Device"
 msgstr "裝置"
 
+#: src/components/traffic/traffic-usage-cell.tsx
+msgid "Disabled"
+msgstr "已停用"
+
 #. Context: Battery state
 #: src/lib/i18n.ts
 msgid "Discharging"
@@ -831,6 +904,10 @@ msgstr "關閉"
 msgctxt "Layout display options"
 msgid "Display"
 msgstr "顯示"
+
+#: src/components/traffic/traffic-settings-dialog.tsx
+msgid "Display units"
+msgstr "显示单位"
 
 #: src/components/network-monitors-table/monitor-dialog.tsx
 msgid "DNS Server"
@@ -1231,6 +1308,18 @@ msgstr "有可用的映像檔更新"
 msgid "Inactive"
 msgstr "未啟用"
 
+#: src/components/traffic/traffic-usage-cell.tsx
+msgid "Incomplete period"
+msgstr "周期数据不完整"
+
+#: src/components/traffic/traffic-usage-cell.tsx
+msgid "Initializing"
+msgstr "正在初始化"
+
+#: src/components/routes/system/traffic-panel.tsx
+msgid "Interface counters may differ from the provider's bill."
+msgstr "网卡计数可能与云厂商账单存在差异。"
+
 #: src/components/network-monitors-table/network-monitors-columns.tsx
 #: src/components/network-monitors-table/network-monitors-columns.tsx
 #: src/components/routes/settings/heartbeat.tsx
@@ -1248,6 +1337,10 @@ msgstr "無效的電子郵件地址。"
 #: src/components/routes/settings/general.tsx
 msgid "Language"
 msgstr "語言"
+
+#: src/components/routes/system/traffic-panel.tsx
+msgid "Last sync"
+msgstr "最近同步"
 
 #: src/components/systems-table/systems-table.tsx
 msgid "Layout"
@@ -1291,10 +1384,18 @@ msgstr "平均負載"
 msgid "Load state"
 msgstr "載入狀態"
 
+#: src/components/routes/system/traffic-panel.tsx
+msgid "Loading traffic"
+msgstr "正在读取流量"
+
 #: src/components/systemd-table/systemd-table.tsx
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Loading..."
 msgstr "載入中..."
+
+#: src/components/traffic/traffic-usage-cell.tsx
+msgid "Loading…"
+msgstr ""
 
 #: src/components/navbar.tsx
 #: src/components/navbar.tsx
@@ -1395,6 +1496,10 @@ msgstr "1 小時最小"
 msgid "Minor"
 msgstr "次要"
 
+#: src/components/routes/system/traffic-panel.tsx
+msgid "Missing days are gaps, not zero usage. Historical coverage has not been fully verified."
+msgstr "缺失日期表示数据空缺，并非用量为零；历史覆盖范围尚未完全核实。"
+
 #. Device model
 #: src/components/routes/system/smart-table.tsx
 msgid "Model"
@@ -1472,13 +1577,29 @@ msgstr "網路單位"
 msgid "No"
 msgstr "否"
 
+#: src/components/routes/system/traffic-panel.tsx
+msgid "No daily traffic collected yet."
+msgstr "尚未采集到每日流量。"
+
 #: src/components/routes/system/storage-pools-table.tsx
 msgid "No detail data for this pool."
 msgstr "此儲存池沒有可用的詳細資料。"
 
+#: src/components/routes/system/traffic-panel.tsx
+msgid "No interface selected"
+msgstr "尚未选择网卡"
+
 #: src/components/systemd-table/systemd-table.tsx
 msgid "No logs found."
 msgstr "找不到系統記錄。"
+
+#: src/components/traffic/traffic-usage-cell.tsx
+msgid "No monitored interfaces"
+msgstr "没有已监测网卡"
+
+#: src/components/routes/system/traffic-panel.tsx
+msgid "No quota"
+msgstr "未设置配额"
 
 #: src/components/command-palette.tsx
 #: src/components/systemd-table/systemd-table.tsx
@@ -1527,6 +1648,10 @@ msgstr "通知可能包含近期的容器日誌片段。"
 #: src/components/login/auth-form.tsx
 msgid "OAuth 2 / OIDC support"
 msgstr "支援 OAuth 2 / OIDC"
+
+#: src/components/traffic/traffic-usage-cell.tsx
+msgid "Offline · last known"
+msgstr "离线 · 显示最后记录"
 
 #: src/components/routes/settings/config-yaml.tsx
 msgid "On each restart, systems in the database will be updated to match the systems defined in the file."
@@ -1582,6 +1707,12 @@ msgstr "或繼續使用"
 #: src/components/routes/system/package-updates-table.tsx
 msgid "Other"
 msgstr "其他"
+
+#: src/components/routes/system/traffic-panel.tsx
+#: src/components/traffic/traffic-settings-dialog.tsx
+#: src/components/traffic/traffic-usage-cell.tsx
+msgid "Outbound only"
+msgstr "仅出站流量"
 
 #: src/components/alerts/alerts-sheet.tsx
 msgid "Overwrite existing alerts"
@@ -1651,6 +1782,10 @@ msgstr "暫停"
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Paused"
 msgstr "已暫停"
+
+#: src/components/traffic/traffic-usage-cell.tsx
+msgid "Paused · last known"
+msgstr "已暂停 · 显示最后记录"
 
 #: src/components/systems-table/systems-table.tsx
 msgid "Paused ({pausedSystemsLength})"
@@ -1779,6 +1914,14 @@ msgstr "隊列深度"
 msgid "Quiet Hours"
 msgstr "靜音時段"
 
+#: src/components/traffic/traffic-settings-dialog.tsx
+msgid "Quota"
+msgstr "配额"
+
+#: src/components/routes/system/traffic-panel.tsx
+msgid "Quota usage"
+msgstr "配额使用率"
+
 #: src/components/routes/system/raw-capacity-label.tsx
 #: src/components/routes/system/storage-pools-table.tsx
 #: src/components/routes/system/storage-pools-table.tsx
@@ -1806,8 +1949,15 @@ msgid "Read errors"
 msgstr "讀取錯誤"
 
 #: src/components/routes/system/charts/network-charts.tsx
+#: src/components/routes/system/traffic-panel.tsx
 msgid "Received"
 msgstr "接收"
+
+#: src/components/routes/system/traffic-panel.tsx
+#: src/components/traffic/traffic-settings-dialog.tsx
+#: src/components/traffic/traffic-usage-cell.tsx
+msgid "Received + sent"
+msgstr "接收与发送合计"
 
 #: src/components/containers-table/containers-table.tsx
 #: src/components/logs-display.tsx
@@ -1817,6 +1967,10 @@ msgstr "接收"
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Refresh"
 msgstr "重新整理"
+
+#: src/components/routes/system/traffic-panel.tsx
+msgid "Refresh traffic"
+msgstr "刷新流量"
 
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Relationships"
@@ -1868,6 +2022,10 @@ msgstr "重啟次數"
 msgid "Resume"
 msgstr "繼續"
 
+#: src/components/routes/system/traffic-panel.tsx
+msgid "Retry"
+msgstr ""
+
 #: src/components/token-value.tsx
 #: src/components/token-value.tsx
 msgid "Reveal token"
@@ -1913,6 +2071,10 @@ msgstr "儲存 {foo}"
 msgid "Save address using enter key or comma. Leave blank to disable email notifications."
 msgstr "使用 Enter 鍵或逗號儲存地址。留空以停用電子郵件通知。"
 
+#: src/components/traffic/traffic-settings-dialog.tsx
+msgid "Save settings"
+msgstr "保存设置"
+
 #: src/components/routes/settings/general.tsx
 #: src/components/routes/settings/notifications.tsx
 msgid "Save Settings"
@@ -1925,6 +2087,10 @@ msgstr "儲存 系統"
 #: src/components/routes/settings/tokens-fingerprints.tsx
 msgid "Saved in the database and does not expire until you disable it."
 msgstr "儲存在資料庫中，在您停用之前不會過期。"
+
+#: src/components/traffic/traffic-settings-dialog.tsx
+msgid "Saving…"
+msgstr "正在保存…"
 
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Schedule"
@@ -2014,6 +2180,7 @@ msgid "Send test heartbeat"
 msgstr "發送測試 Heartbeat"
 
 #: src/components/routes/system/charts/network-charts.tsx
+#: src/components/routes/system/traffic-panel.tsx
 msgid "Sent"
 msgstr "傳送"
 
@@ -2038,6 +2205,10 @@ msgstr "設定儀表顏色的百分比閾值。"
 msgid "Set the following environment variables on your Beszel hub to enable heartbeat monitoring:"
 msgstr "設定以下環境變數至 Beszel Hub 以啟用 Heartbeat 監控："
 
+#: src/components/routes/system/traffic-panel.tsx
+msgid "Set up Docker traffic collection"
+msgstr "配置 Docker 流量采集"
+
 #: src/components/command-palette.tsx
 #: src/components/command-palette.tsx
 #: src/components/navbar.tsx
@@ -2056,6 +2227,10 @@ msgstr "已儲存設定"
 msgid "Show timestamps"
 msgstr "顯示時間戳記"
 
+#: src/components/traffic/traffic-settings-dialog.tsx
+msgid "Show traffic usage"
+msgstr "显示流量用量"
+
 #: src/components/login/auth-form.tsx
 msgid "Sign in"
 msgstr "登入"
@@ -2072,6 +2247,10 @@ msgstr "SMTP 設定"
 #: src/components/systems-table/systems-table.tsx
 msgid "Sort By"
 msgstr "排序"
+
+#: src/components/traffic/traffic-usage-cell.tsx
+msgid "Stale"
+msgstr "数据已过期"
 
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/quiet-hours.tsx
@@ -2097,6 +2276,10 @@ msgstr "狀態"
 #: src/components/systemd-table/systemd-table-columns.tsx
 msgid "Sub State"
 msgstr "子狀態"
+
+#: src/components/traffic/traffic-usage-cell.tsx
+msgid "Suspected counter reset"
+msgstr "疑似计数重置"
 
 #: src/components/routes/system/charts/memory-charts.tsx
 msgid "Swap space used by the system"
@@ -2212,9 +2395,17 @@ msgstr "當所有系統都正常運行時，整體狀態為 <0>正常</0>；當�
 msgid "Then log into the backend and reset your user account password in the users table."
 msgstr "然後登入後台並在使用者列表中重設您的帳號密碼。"
 
+#: src/components/traffic/traffic-settings-dialog.tsx
+msgid "This account can view settings but cannot change them."
+msgstr "此账号只能查看设置，无法修改。"
+
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "This action cannot be undone. This will permanently delete all current records for {name} from the database."
 msgstr "此操作無法復原。這將永久刪除資料庫中{name}的所有當前記錄。"
+
+#: src/components/traffic/traffic-settings-dialog.tsx
+msgid "This virtual interface may count traffic already recorded by the public interface."
+msgstr "此虚拟网卡可能重复记录公网网卡已统计的流量。"
 
 #: src/components/network-monitors-table/network-monitors-table.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
@@ -2236,6 +2427,10 @@ msgstr "時間格式"
 #: src/components/routes/settings/notifications.tsx
 msgid "To email(s)"
 msgstr "發送到電子郵件"
+
+#: src/components/routes/system/traffic-panel.tsx
+msgid "Today"
+msgstr "今日"
 
 #: src/components/add-system.tsx
 #: src/components/routes/settings/tokens-fingerprints.tsx
@@ -2289,6 +2484,30 @@ msgstr "讀寫總耗時（可能超過 100%）"
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Total: {0}"
 msgstr "總計：{0}"
+
+#: src/components/routes/system.tsx
+#: src/components/routes/system/traffic-panel.tsx
+#: src/components/routes/system/traffic-panel.tsx
+msgid "Traffic"
+msgstr "流量"
+
+#: src/components/traffic/traffic-usage-cell.tsx
+msgid "Traffic not enabled"
+msgstr "未启用流量采集"
+
+#: src/components/traffic/traffic-usage-cell.tsx
+msgid "Traffic quota usage"
+msgstr "流量配额使用率"
+
+#: src/components/traffic/traffic-settings-dialog.tsx
+#: src/components/traffic/traffic-settings-dialog.tsx
+msgid "Traffic settings"
+msgstr "流量设置"
+
+#: src/components/routes/system/traffic-panel.tsx
+#: src/components/traffic/traffic-usage-cell.tsx
+msgid "Traffic unavailable"
+msgstr "流量数据暂不可用"
 
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Triggered by"
@@ -2373,9 +2592,21 @@ msgstr "當任何磁碟使用率超過閾值時觸發"
 msgid "Type"
 msgstr "類型"
 
+#: src/components/routes/system/traffic-panel.tsx
+msgid "Unable to refresh. Showing last known data."
+msgstr "刷新失败，正在显示最后已知的数据。"
+
+#: src/components/traffic/traffic-settings-dialog.tsx
+msgid "Unable to save. Check the quota, interface and permissions."
+msgstr "保存失败，请检查配额、网卡和权限。"
+
 #: src/lib/alerts.ts
 msgid "Unhealthy"
 msgstr "不健康"
+
+#: src/components/traffic/traffic-settings-dialog.tsx
+msgid "Unit"
+msgstr "单位"
 
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Unit file"
@@ -2404,6 +2635,10 @@ msgstr "未知"
 msgid "Unlimited"
 msgstr "無限制"
 
+#: src/components/traffic/traffic-usage-cell.tsx
+msgid "Unsupported platform"
+msgstr "当前平台不支持"
+
 #. Context: System is up
 #: src/components/routes/system/info-bar.tsx
 #: src/components/systems-table/systems-table-columns.tsx
@@ -2422,6 +2657,10 @@ msgstr "已是最新"
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Update"
 msgstr "更新"
+
+#: src/components/traffic/traffic-usage-cell.tsx
+msgid "Update failed"
+msgstr "更新失败"
 
 #: src/components/containers-table/containers-table-columns.tsx
 #: src/components/network-monitors-table/network-monitors-columns.tsx
@@ -2490,6 +2729,14 @@ msgstr "利用率"
 msgid "Value"
 msgstr "值"
 
+#: src/components/routes/system/traffic-panel.tsx
+msgid "Values are as of the last sync; today is still in progress."
+msgstr "数值截至最近一次同步，当日仍在累计。"
+
+#: src/components/traffic/traffic-usage-cell.tsx
+msgid "Verify UTC configuration"
+msgstr "请核验 UTC 配置"
+
 #: src/components/network-monitors-table/network-monitors-table.tsx
 #: src/components/routes/system/info-bar.tsx
 #: src/components/systems-table/systems-table.tsx
@@ -2518,6 +2765,22 @@ msgstr "檢視最近 200 則警報。"
 #: src/components/systems-table/systems-table.tsx
 msgid "Visible Fields"
 msgstr "顯示欄位"
+
+#: src/components/traffic/traffic-usage-cell.tsx
+msgid "vnStat database unavailable"
+msgstr "无法读取 vnStat 数据库"
+
+#: src/components/traffic/traffic-usage-cell.tsx
+msgid "vnStat not installed"
+msgstr "尚未安装 vnStat"
+
+#: src/components/traffic/traffic-usage-cell.tsx
+msgid "vnStat permission denied"
+msgstr "vnStat 读取权限不足"
+
+#: src/components/traffic/traffic-usage-cell.tsx
+msgid "vnStat query timed out"
+msgstr "vnStat 查询超时"
 
 #: src/components/charts/chart-no-values.tsx
 #: src/components/routes/system/chart-card.tsx

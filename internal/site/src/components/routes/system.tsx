@@ -27,6 +27,7 @@ import { LoadAverageChart } from "./system/charts/load-average-chart"
 import { ContainerIcon, CpuIcon, HardDriveIcon, NetworkIcon, PackageIcon, TerminalSquareIcon } from "lucide-react"
 import { GpuIcon } from "../ui/icons"
 import ContainersTable from "../containers-table/containers-table"
+import TrafficPanel from "./system/traffic-panel"
 
 const SEMVER_0_14_0 = parseSemVer("0.14.0")
 const SEMVER_0_15_0 = parseSemVer("0.15.0")
@@ -79,7 +80,7 @@ export default memo(function SystemDetail({ id }: { id: string }) {
 	const packageUpdates = system.status === SystemStatus.Up && system.info.pu?.[0] ? system.info.pu.join(",") : ""
 
 	// keep tabsRef in sync for keyboard navigation
-	const tabs = ["core", "network", "disk"]
+	const tabs = ["core", "network", "traffic", "disk"]
 	if (hasGpu) tabs.push("gpu")
 	if (hasContainers) tabs.push("containers")
 	if (hasSystemd) tabs.push("services")
@@ -171,6 +172,7 @@ export default memo(function SystemDetail({ id }: { id: string }) {
 				{packageUpdates && <LazyPackageUpdatesTable systemId={system.id} counts={packageUpdates} />}
 
 				{hasNetworkMonitors && <LazyNetworkMonitorsTable systemId={system.id} />}
+				<TrafficPanel key={system.id} systemId={system.id} />
 			</>
 		)
 	}
@@ -186,6 +188,9 @@ export default memo(function SystemDetail({ id }: { id: string }) {
 					<TabsTrigger value="network" className="w-full flex items-center gap-1.5">
 						<NetworkIcon className="size-3.5" />
 						<Trans>Network</Trans>
+					</TabsTrigger>
+					<TabsTrigger value="traffic" className="w-full flex items-center gap-1.5">
+						<NetworkIcon className="size-3.5" /><Trans>Traffic</Trans>
 					</TabsTrigger>
 					<TabsTrigger value="disk" className="w-full flex items-center gap-1.5">
 						<HardDriveIcon className="size-3.5" />
@@ -242,6 +247,9 @@ export default memo(function SystemDetail({ id }: { id: string }) {
 					)}
 				</TabsContent>
 
+				<TabsContent value="traffic" className="contents">
+					<TrafficPanel key={system.id} systemId={system.id} />
+				</TabsContent>
 				<TabsContent value="disk" forceMount className={activeTab === "disk" ? "contents" : "hidden"}>
 					{mountedTabs.has("disk") && (
 						<>
