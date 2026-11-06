@@ -1,23 +1,25 @@
 # 当前测试候选版本
 
-版本：`0.21.1-plus.1-candidate.42168663335.1`，上游v0.21.1；源码`85425f0da8ffa85d10fe1e11fc174e801f0abf5d`。[候选Release](https://github.com/CodeAIX/Beszel-Plus/releases/tag/v0.21.1-plus.1-candidate.42168663335.1)附带源码manifest、补丁、提交清单与SHA256SUMS。最新plus/main另含发行维护修正，不改变本候选的功能代码。
+版本：`0.21.1-plus.1-candidate.42181555701.1`，上游 v0.21.1；源码 `452a8221545380cdddb9072888e7855d1064a234`。[候选 Release](https://github.com/CodeAIX/Beszel-Plus/releases/tag/v0.21.1-plus.1-candidate.42181555701.1) 附带源码 manifest、补丁、提交清单与 SHA256SUMS。
+
+本版包含已确认的[紧凑流量列](UI_COMPACT_COLUMN.md)：单行百分比、入站/出站双色进度条，列位置紧随磁盘、位于 GPU/负载之前；表格与网格视图同步。
 
 Hub（linux/amd64、linux/arm64，公开/匿名拉取已验证）：
 
 ```
-ghcr.io/codeaix/beszel-plus/beszel@sha256:e3d15380641e8bdb4430acc34af780bba034933958803da21771bb0d917fdf2a
+ghcr.io/codeaix/beszel-plus/beszel@sha256:2e2fd6121db132a605288f5ebb5a36ff12aacbc705d4b5558f6d8051f51e3a88
 ```
 
-Docker Agent（同样支持双架构；内置vnStat CLI，不启动daemon）：
+Docker Agent（同样支持双架构；内置 vnStat CLI，不启动 daemon）：
 
 ```
-ghcr.io/codeaix/beszel-plus/beszel-agent@sha256:865c0dfe925778bdd052ed0dd0ebf39275ed277692815885e46dea30289947b3
+ghcr.io/codeaix/beszel-plus/beszel-agent@sha256:eeb8c10de0b917feec02e965d5e41888e6d2c36a11eec0a6b313aa6b93cecf1c
 ```
 
-首次验收时，本机127.0.0.1:18090运行此固定digest。当前本机将更新至[流量列紧凑样式预览](UI_COMPACT_COLUMN.md)，公开候选镜像保持不变；独立Colima context为colima-beszel-plus。Hub数据与原Agent数据卷均已保留；真实测试Agent在线且流量fresh，90天历史样例及20GB配额保持不变。Docker空白凭据配置、匿名registry请求均已验证可拉取；OCI标签/Hub信息与源码对应。
+本机 127.0.0.1:18090 已升级至上述两个固定 digest，独立 Colima context 为 colima-beszel-plus。升级前备份完整 Hub 数据目录与 Agent 数据；4 个系统、各自流量设置、历史样例记录/账单汇总均保留，真实计数单调不减，测试 Agent 在线且流量 fresh。原 Agent 数据卷、宿主 vnStat daemon 与用户显示列设置继续沿用。
 
-证据：[完整测试/镜像构建](https://github.com/CodeAIX/Beszel-Plus/actions/runs/42168663335)（verify成功、两个镜像发布成功，首次Release收尾遇权限限制）；[验证产物后完成Release](https://github.com/CodeAIX/Beszel-Plus/actions/runs/42171231148)；[GITHUB_TOKEN合并/标签/Release权限实测](https://github.com/CodeAIX/Beszel-Plus/actions/runs/42171535509)。维护修正解决了workflow文件权限及重跑不可变版本的问题。
+[完整测试/镜像/Release 流水线](https://github.com/CodeAIX/Beszel-Plus/actions/runs/42181555701) 的 verify、images 两个任务均成功：前端 33 项测试与生产构建、Go 全包 race、2GB Hub 启动及完整目录备份恢复、双架构镜像发布通过。发布后另验证附件校验和、固定源 tag、补丁在固定上游上的干净回放、匿名 OCI 索引/实际 Docker 拉取、镜像版本/来源标签及本机升级。首次候选的发行与权限修正历史见 [S5_REPORT](S5_REPORT.md)。
 
-最初的24小时健康/资源观察从2026-11-06 06:04:43 UTC开始，后续本机UI更新会重新开始计时，以current.txt指向的metadata.json为准；报告在本机`.plus-local/observation/`，current.txt指向本次目录，结束后生成summary.json。休眠/断连会记录为观察空缺，不能当连续通过。目前未完成24小时验收，也没有stable/latest Docker别名。
+当前版本的 24 小时健康/资源观察从 **2026-11-06 08:04:26 UTC（北京时间 16:04:26）** 开始，初始样本 health=true、traffic=ok/fresh。报告在本机 `.plus-local/observation/`，current.txt 指向本次目录，结束后生成 summary.json。旧观察单独保留并标记因升级停止；休眠/断连会记录为空缺，不能当连续通过。**目前未完成 24 小时验收，也没有 stable/latest Docker 别名。**
 
-VPS先按[VPS_SETUP](VPS_SETUP.md)安装并核验UTC配置，再按[Docker Agent集成](DOCKER_AGENT.md)合并只读挂载。原Agent不会自动获得流量功能。当前不操作fnOS/生产VPS；需要部署时先备份，先Hub后逐台Agent。
+VPS 先按 [VPS_SETUP](VPS_SETUP.md) 安装并核验 UTC 配置，再按 [Docker Agent 集成](DOCKER_AGENT.md) 合并只读挂载。原 Agent 不会自动获得流量功能。当前不操作 fnOS/生产 VPS；需要部署时先备份，先 Hub 后逐台 Agent。

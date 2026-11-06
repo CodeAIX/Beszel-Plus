@@ -1,6 +1,6 @@
 # S5 发行与上游维护
 
-2026-11-06。已发布[首个测试候选](https://github.com/CodeAIX/Beszel-Plus/releases/tag/v0.21.1-plus.1-candidate.42168663335.1)，完整镜像digest/源码/测试链接见[CANDIDATE.md](CANDIDATE.md)。源码`85425f0da8ffa85d10fe1e11fc174e801f0abf5d`；后续提交只修正维护工作流与文档。
+2026-11-06。已发布[首个测试候选](https://github.com/CodeAIX/Beszel-Plus/releases/tag/v0.21.1-plus.1-candidate.42168663335.1)，完整镜像digest/源码/测试链接见[CANDIDATE.md](CANDIDATE.md)。源码`85425f0da8ffa85d10fe1e11fc174e801f0abf5d`；后续先修正维护工作流与文档，再加入紧凑流量列及顺序优化。
 
 ## 产品与验证
 
@@ -23,3 +23,9 @@ plus-upstream每天UTC03:19检查官方稳定release，跳过草稿/预发布/�
 ## 观察状态
 
 24小时健康/资源观察已经在公开候选digest上启动（2026-11-06 06:04:43 UTC），最初样本health=true、traffic=ok。结束后生成本地summary.json，休眠/采样空缺会使连续观察不通过。当前尚未完成24小时、生产VPS账单对账或stable提升。
+
+## 紧凑流量列候选更新
+
+已发布 [0.21.1-plus.1-candidate.42181555701.1](https://github.com/CodeAIX/Beszel-Plus/releases/tag/v0.21.1-plus.1-candidate.42181555701.1)，源码 `452a8221545380cdddb9072888e7855d1064a234`；[测试、镜像和 Release 流水线](https://github.com/CodeAIX/Beszel-Plus/actions/runs/42181555701) 两个任务均成功，全程正常发行，无需恢复流程。前端现为 33 项测试，完整 Go race、2GB Hub 启动/目录恢复与双架构构建通过。附件校验和、固定 tag、补丁回放、公开匿名拉取及来源标签均验证通过。
+
+本机已备份并将 Hub/Agent 升级至新候选固定 digest，4 个系统及设置/历史保留，真实 Agent 在线、流量 fresh。新观察从 2026-11-06 08:04:26 UTC 开始，旧观察未计为完成；当前镜像与验收边界见 [CANDIDATE](CANDIDATE.md)。
